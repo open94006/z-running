@@ -7,9 +7,12 @@ services:
       dockerfile: Dockerfile
     container_name: my_server
     restart: unless-stopped
+    # 確保內部的 Node.js 真的跑在 5100 埠
+    expose:
+      - "5100" 
     environment:
-      # If you ever call the API cross-origin, allow the main site.
       - CORS_ORIGIN=https://z-running.com
+      - PORT=5100 # 建議在環境變數也指定
 
   client:
     build:
@@ -17,16 +20,19 @@ services:
       dockerfile: Dockerfile
     container_name: my_client
     restart: unless-stopped
+    expose:
+      - "80"
     depends_on:
       - server
 
   caddy:
-    image: caddy:2
+    image: caddy:2-alpine # 使用 alpine 版本體積更小，更 Vibe
     container_name: my_caddy
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp" # HTTP/3 支援（選配，但對效能有幫助）
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -38,4 +44,3 @@ services:
 volumes:
   caddy_data:
   caddy_config:
-

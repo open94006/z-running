@@ -1,14 +1,18 @@
 z-running.com {
   encode zstd gzip
 
-  # API -> Express
-  handle_path /api/* {
+  # 如果你的 Express 程式碼裡有寫 app.get('/api/...')，用 handle
+  # 如果 Express 程式碼是 app.get('/...')，則維持原本的 handle_path
+  handle /api/* {
     reverse_proxy server:5100
   }
 
-  # Frontend -> Nginx (static SPA)
+  # 前端
   handle {
-    reverse_proxy client:80
+    reverse_proxy client:80 {
+        # 確保 Nginx 拿到的 Host 是正確的
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+    }
   }
 }
-
