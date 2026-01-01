@@ -34,4 +34,7 @@ coverage/
 Thumbs.db
 .idea/
 .vscode/
+
+# 個人筆記
 input.txt
+input.md

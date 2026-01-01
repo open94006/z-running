@@ -82,13 +82,18 @@ const RunningCalculator: React.FC = () => {
               </button>
             ))}
           </div>
-          <input
-            type="number"
-            value={distance}
-            onChange={(e) => setDistance(e.target.value)}
-            className="w-full p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
-            placeholder="輸入距離"
-          />
+          <div className="relative">
+            <input
+              type="number"
+              value={distance}
+              onChange={(e) => setDistance(e.target.value)}
+              className="w-full p-3 pr-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
+              placeholder="輸入距離"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500 dark:text-gray-400">
+              km
+            </div>
+          </div>
         </div>
 
         {mode === 'calcPace' ? (
