@@ -1,28 +1,30 @@
-# --- 階段一：編譯前端 React ---
+# 階段一：編譯前端 React
 FROM node:20 AS client-builder
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
 COPY client/ ./
-RUN npm run build 
-# 註：build 後通常會產生 dist 或 build 資料夾
+RUN npm run build
 
-# --- 階段二：設定後端並整合 ---
+# 階段二：編譯後端 TypeScript
+FROM node:20 AS server-builder
+WORKDIR /app/server
+COPY server/package*.json ./
+RUN npm install
+COPY server/ ./
+RUN npm run build 
+# 註：這會產生 dist 資料夾，內含編譯後的 JS
+
+# 階段三：最終執行環境
 FROM node:20-slim
 WORKDIR /app
-
-# 複製後端程式碼
 COPY server/package*.json ./
 RUN npm install --production
-COPY server/ ./
-
-# 將階段一編譯好的前端檔案，複製到後端指定的靜態資料夾
-# 這裡假設後端程式碼中設定 app.use(express.static('public'))
+# 複製後端編譯好的檔案
+COPY --from=server-builder /app/server/dist ./
+# 複製前端編譯好的檔案到後端指定的 public 目錄
 COPY --from=client-builder /app/client/dist ./public
 
-# Cloud Run 規範
 ENV NODE_ENV=production
-ENV PORT=8080
-EXPOSE 8080
-
+# 這裡不需要 EXPOSE 5100，Cloud Run 會接管
 CMD ["node", "index.js"]
