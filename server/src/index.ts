@@ -3,6 +3,7 @@ import cors from 'cors';
 import productRoute from './routes/product.route.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { renderHTMLWithSEO, defaultSEO } from './services/seo.service.js';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -32,13 +33,24 @@ app.get('/api/hello', (req, res) => {
     res.json({ message: 'Hello from Express + TS backend!' });
 });
 
+app.get('/api/seo', (req, res) => {
+    res.json(defaultSEO);
+});
+
 app.use('/api/product', productRoute);
 
 // 服務前端靜態檔案 (選配，確保 Cloud Run 能正確服務前端)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+
 app.get(/.*/, (req, res, next) => {
+    console.log('request received');
     if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+
+    // 透過 SEO service 動態渲染 index.html
+    const htmlPath = path.join(__dirname, 'public', 'index.html');
+    const renderedHtml = renderHTMLWithSEO(htmlPath);
+    console.log('renderedHtml');
+    res.send(renderedHtml);
 });
 
 app.listen(Number(PORT), '0.0.0.0', () => {

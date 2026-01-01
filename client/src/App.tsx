@@ -1,27 +1,58 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppLayout from './layouts/AppLayout';
+import RunningCalculator from './pages/RunningCalculator';
+import WeightCalculator from './pages/WeightCalculator';
+import PitchingCalculator from './pages/PitchingCalculator';
 
 function App() {
-  const [message, setMessage] = useState('載入中');
+    useEffect(() => {
+        const fetchSEO = async () => {
+            try {
+                const response = await fetch('/api/seo');
+                if (!response.ok) return;
+                const data = await response.json();
 
-  // 可以看到兩秒鐘後從「載入中」變化成後端回傳的文字
-  useEffect(() => {
-    setTimeout(() => {
-      fetch('http://localhost:5100/api/hello')
-      .then((res) => {
-        return res.json()
-      })
-      .then((data) => {
-        return setMessage(data.message)
-      });
-    }, 2000);
-  }, []);
+                // Update Title
+                document.title = data.title;
 
-  return (
-    <div>
-      <h1>React + Express + TS</h1>
-      <p>{message}</p>
-    </div>
-  );
+                // Update Meta Tags
+                const updateMeta = (property: string, content: string, attrName: string = 'property') => {
+                    const element = document.querySelector(`meta[${attrName}="${property}"]`);
+                    if (element) {
+                        element.setAttribute('content', content);
+                    }
+                };
+
+                updateMeta('description', data.description, 'name');
+                updateMeta('keywords', data.keywords, 'name');
+                updateMeta('og:title', data.title);
+                updateMeta('og:description', data.description);
+                updateMeta('og:image', data.image);
+                updateMeta('og:url', data.url);
+                updateMeta('twitter:title', data.title);
+                updateMeta('twitter:description', data.description);
+                updateMeta('twitter:image', data.image);
+            } catch (error) {
+                console.error('Failed to fetch SEO data:', error);
+            }
+        };
+
+        fetchSEO();
+    }, []);
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<AppLayout />}>
+                    <Route index element={<Navigate to="/running" replace />} />
+                    <Route path="running" element={<RunningCalculator />} />
+                    <Route path="weight" element={<WeightCalculator />} />
+                    <Route path="pitching" element={<PitchingCalculator />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, Dumbbell, Activity, Trophy, Zap } from "lucide-react";
+import { Menu, X, Dumbbell, Activity, Trophy } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import clsx from "clsx";
 import ThemeToggle from "../components/ThemeToggle";
@@ -24,8 +24,8 @@ const SidebarContent: React.FC<{
           isDesktopSidebarCollapsed ? "justify-center w-full" : ""
         )}
       >
-        <div className="bg-blue-600 p-1.5 rounded-lg shrink-0">
-          <Zap size={20} className="text-white" fill="white" />
+        <div className="shrink-0 overflow-hidden rounded-lg w-8 h-8">
+          <img src="/runner_icon.jpg" alt="Logo" className="w-full h-full object-cover" />
         </div>
         {/* Use inline style for color to force override if Tailwind utility fails due to specificity, though !text-white should work */}
         <span
@@ -35,7 +35,7 @@ const SidebarContent: React.FC<{
           )}
           style={{ color: "#ffffff" }}
         >
-          Vibe Tools
+          Z-Running
         </span>
       </div>
       {/* Mobile Close Button inside sidebar */}
