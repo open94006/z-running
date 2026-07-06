@@ -34,6 +34,7 @@ coverage/
 Thumbs.db
 .idea/
 .vscode/
+.claude/
 
 # 個人筆記
 PLAYGROUND.md

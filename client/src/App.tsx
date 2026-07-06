@@ -6,6 +6,7 @@ import WeightCalculator from './pages/WeightCalculator';
 import PitchingCalculator from './pages/PitchingCalculator';
 import BadmintonScoreboard from './pages/BadmintonScoreboard';
 import WeatherChecker from './pages/WeatherChecker';
+import UiKit from './pages/UiKit';
 import { AlertProvider } from './components/AlertContext';
 
 function App() {
@@ -55,6 +56,8 @@ function App() {
                         <Route path="pitching" element={<PitchingCalculator />} />
                         <Route path="badminton" element={<BadmintonScoreboard />} />
                         <Route path="weather" element={<WeatherChecker />} />
+                        {/* not in NAV_ITEMS — internal component reference, not a menu destination */}
+                        <Route path="ui" element={<UiKit />} />
                     </Route>
                 </Routes>
             </AlertProvider>

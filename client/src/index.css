@@ -139,3 +139,85 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* ── design system tokens ──
+   Semantic colors are indirected through plain CSS custom properties (not @theme)
+   so .dark can redefine their values at runtime; @theme just exposes them as utilities
+   (bg-primary, text-ink-muted, border-border, ...). */
+@theme {
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-soft: var(--primary-soft);
+    --color-success: var(--success);
+    --color-success-soft: var(--success-soft);
+    --color-warn: var(--warn);
+    --color-warn-soft: var(--warn-soft);
+    --color-danger: var(--danger);
+    --color-danger-soft: var(--danger-soft);
+    --color-info: var(--info);
+    --color-info-soft: var(--info-soft);
+    --color-accent: var(--accent-purple);
+
+    --color-app: var(--app-bg);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-surface-3: var(--surface-3);
+    --color-border: var(--border);
+    --color-border-strong: var(--border-strong);
+    --color-ink: var(--text);
+    --color-ink-muted: var(--text-muted);
+    --color-ink-subtle: var(--text-subtle);
+}
+
+:root {
+    /* semantic action colors — muted & supportive, not vivid (a companion relaying
+       today's run conditions, not a sports poster) */
+    --primary: #35748f;
+    --primary-hover: #2b5f77;
+    --primary-soft: #e8f0f3;
+    --success: #4f9a72;
+    --success-soft: #eaf3ee;
+    --warn: #c08a3e;
+    --warn-soft: #f7f0e4;
+    --danger: #c05f54;
+    --danger-soft: #f6ebe9;
+    --info: #4a8bab;
+    --info-soft: #e9f1f5;
+    --accent-purple: #7d76a6;
+
+    /* neutrals — cool slate, faint blue bias */
+    --app-bg: #eef1f4;
+    --surface: #ffffff;
+    --surface-2: #f6f8fa;
+    --surface-3: #eef1f4;
+    --border: #e0e5ea;
+    --border-strong: #cbd2d9;
+    --text: #1e2a33;
+    --text-muted: #56636e;
+    --text-subtle: #93a0aa;
+}
+
+.dark {
+    --primary: #6aa6c2;
+    --primary-hover: #7fb6d0;
+    --primary-soft: #1a2a33;
+    --success: #6bb891;
+    --success-soft: #16302433;
+    --warn: #d3ac6d;
+    --warn-soft: #3a2c1533;
+    --danger: #d0867c;
+    --danger-soft: #3a201d33;
+    --info: #74add0;
+    --info-soft: #15303c33;
+    --accent-purple: #a49dc4;
+
+    --app-bg: #0d151a;
+    --surface: #18222a;
+    --surface-2: #101a20;
+    --surface-3: #0f181d;
+    --border: #2a363e;
+    --border-strong: #3c4a54;
+    --text: #e7edf1;
+    --text-muted: #a9b6c0;
+    --text-subtle: #6f7d88;
+}

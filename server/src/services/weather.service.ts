@@ -9,16 +9,23 @@ interface WeatherData {
     description: string;
     humidity: number;
     windSpeed: number;
+    windDeg?: number; // 風向角度（0-360，氣象方位角），僅 OWM 提供，CWA 站點無此資料
     icon: string;
     feelsLike: number;
     pressure: number;
     visibility: number;
     precipitationProbability?: number; // 降雨機率 (%)
+    uvIndex?: number; // 紫外線指數（僅台灣地區，CWA 逐 12 小時預報）
+    uvLevel?: string; // 紫外線曝曬級數文字（例如「過量級」），沿用 CWA 官方分級文字
     temperatureTrend6h?: Array<{
         time: string; // ISO 字串
         temperature: number; // 攝氏
         icon: string; // OWM icon code
         description: string;
+        humidity: number; // %
+        windSpeed: number; // km/h
+        feelsLike: number; // 攝氏
+        precipitationProbability: number; // 降雨機率 (%)
     }>;
     timestamp: string;
     source?: string; // 資料來源
@@ -602,12 +609,6 @@ class WeatherService {
         const enrichedData = { ...baseData };
         const sources: string[] = ['OpenWeatherMap'];
 
-        // 0. 先取得未來 6 小時氣溫變化（OWM 3 小時預報）
-        const tempTrend6h = await this.getTemperatureTrend6h(lat, lon, baseData.temperature, baseData.icon, baseData.description);
-        if (tempTrend6h.length > 0) {
-            enrichedData.temperatureTrend6h = tempTrend6h;
-        }
-
         // 1. 基礎: 取得詳細地名 (Reverse Geocoding)
         const locInfo = await this.getDetailedLocationName(lat, lon);
         if (locInfo) {
@@ -638,10 +639,11 @@ class WeatherService {
 
             try {
                 // 平行請求 CWA 和 MOENV
-                const [cwaData, moenvData, cwaRainPoP] = await Promise.all([
+                const [cwaData, moenvData, cwaRainPoP, cwaUv] = await Promise.all([
                     cwaService.getNearestObservation(lat, lon),
                     moenvService.getNearestAqi(lat, lon),
                     forecastCityName ? cwaService.getRainProbabilityByCity(forecastCityName) : Promise.resolve(null),
+                    forecastCityName ? cwaService.getUvForecastByCity(forecastCityName) : Promise.resolve(null),
                 ]);
 
                 // 整合 CWA 資料
@@ -658,6 +660,12 @@ class WeatherService {
                 // 整合 CWA 降雨機率
                 if (typeof cwaRainPoP === 'number') {
                     enrichedData.precipitationProbability = cwaRainPoP;
+                }
+
+                // 整合 CWA 紫外線指數
+                if (cwaUv) {
+                    enrichedData.uvIndex = cwaUv.uvIndex;
+                    enrichedData.uvLevel = cwaUv.uvLevel;
                 }
 
                 // 整合 MOENV 資料
@@ -700,20 +708,43 @@ class WeatherService {
             }
         }
 
+        // 最後才取得未來 24 小時天氣變化，用「最終校正後」的當前值（Taiwan 為 CWA 校正值，其餘為 OWM 原值）當內插錨點——
+        // 若用 CWA 合併前的 OWM 原始當前值，會跟顯示的「當前」數值不一致（OWM 現況觀測有時明顯失準，例如濕度誤差可達數十趴）
+        const tempTrend6h = await this.getTemperatureTrend6h(lat, lon, {
+            temperature: enrichedData.temperature,
+            icon: enrichedData.icon,
+            description: enrichedData.description,
+            humidity: enrichedData.humidity,
+            windSpeed: enrichedData.windSpeed,
+            feelsLike: enrichedData.feelsLike,
+        });
+        if (tempTrend6h.length > 0) {
+            enrichedData.temperatureTrend6h = tempTrend6h;
+        }
+
         enrichedData.source = sources.join(', ');
         return enrichedData;
     }
 
     /**
-     * 取得未來 6 小時氣溫變化（使用 OWM 3 小時預報）
+     * 取得未來 6 小時天氣變化（使用 OWM 3 小時預報：氣溫、濕度、風速、體感、降雨機率）
      */
     private async getTemperatureTrend6h(
         lat: number,
         lon: number,
-        currentTemp: number,
-        currentIcon: string,
-        currentDescription: string,
-    ): Promise<Array<{ time: string; temperature: number; icon: string; description: string }>> {
+        current: { temperature: number; icon: string; description: string; humidity: number; windSpeed: number; feelsLike: number },
+    ): Promise<
+        Array<{
+            time: string;
+            temperature: number;
+            icon: string;
+            description: string;
+            humidity: number;
+            windSpeed: number;
+            feelsLike: number;
+            precipitationProbability: number;
+        }>
+    > {
         try {
             const url = `${this.forecastUrl}?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric&lang=zh_tw`;
             const response = await fetch(url);
@@ -721,7 +752,7 @@ class WeatherService {
 
             const data: any = await response.json();
             const list = Array.isArray(data?.list) ? data.list : [];
-            if (list.length === 0 || !Number.isFinite(currentTemp)) return [];
+            if (list.length === 0 || !Number.isFinite(current.temperature)) return [];
 
             const now = Date.now();
             const firstHour = new Date(now);
@@ -731,60 +762,71 @@ class WeatherService {
             }
             const firstHourTime = firstHour.getTime();
 
-            const anchors: Array<{ time: number; temperature: number }> = [
-                { time: now, temperature: currentTemp },
+            type NumericAnchor = { time: number; value: number };
+
+            const buildAnchors = (extract: (item: any) => number, currentValue: number): NumericAnchor[] => [
+                { time: now, value: currentValue },
                 ...list
-                    .map((item: any) => ({
-                        time: Number(item?.dt) * 1000,
-                        temperature: Number(item?.main?.temp),
-                    }))
-                    .filter((item: { time: number; temperature: number }) => Number.isFinite(item.time) && Number.isFinite(item.temperature) && item.time >= now - 3 * 60 * 60 * 1000)
-                    .sort((a: { time: number; temperature: number }, b: { time: number; temperature: number }) => a.time - b.time),
+                    .map((item: any) => ({ time: Number(item?.dt) * 1000, value: extract(item) }))
+                    .filter((item: NumericAnchor) => Number.isFinite(item.time) && Number.isFinite(item.value) && item.time >= now - 3 * 60 * 60 * 1000)
+                    .sort((a: NumericAnchor, b: NumericAnchor) => a.time - b.time),
             ];
 
-            if (anchors.length === 0) return [];
-
-            const estimateTempAt = (targetTime: number) => {
+            const estimateAt = (anchors: NumericAnchor[], targetTime: number, fallback: number) => {
                 const prev = [...anchors].reverse().find((point) => point.time <= targetTime);
                 const next = anchors.find((point) => point.time >= targetTime);
 
-                if (!prev && next) return next.temperature;
-                if (prev && !next) return prev.temperature;
-                if (!prev || !next) return currentTemp;
-                if (prev.time === next.time) return prev.temperature;
+                if (!prev && next) return next.value;
+                if (prev && !next) return prev.value;
+                if (!prev || !next) return fallback;
+                if (prev.time === next.time) return prev.value;
 
                 const ratio = (targetTime - prev.time) / (next.time - prev.time);
-                return prev.temperature + (next.temperature - prev.temperature) * ratio;
+                return prev.value + (next.value - prev.value) * ratio;
             };
 
-            const findNearestWeather = (targetTime: number) => {
+            const tempAnchors = buildAnchors((item) => Number(item?.main?.temp), current.temperature);
+            if (tempAnchors.length === 0) return [];
+            const humidityAnchors = buildAnchors((item) => Number(item?.main?.humidity), current.humidity);
+            const windAnchors = buildAnchors((item) => Number(item?.wind?.speed) * 3.6, current.windSpeed);
+            const feelsLikeAnchors = buildAnchors((item) => Number(item?.main?.feels_like), current.feelsLike);
+
+            const findNearestBlock = (targetTime: number) => {
                 const nearest = list
                     .map((item: any) => ({
                         time: Number(item?.dt) * 1000,
                         icon: item?.weather?.[0]?.icon,
                         description: item?.weather?.[0]?.description,
+                        pop: Number(item?.pop),
                     }))
-                    .filter((item: { time: number; icon?: string; description?: string }) => Number.isFinite(item.time))
+                    .filter((item: { time: number }) => Number.isFinite(item.time))
                     .sort((a: { time: number }, b: { time: number }) => Math.abs(a.time - targetTime) - Math.abs(b.time - targetTime))[0];
 
                 return {
-                    icon: nearest?.icon || currentIcon || '01d',
-                    description: nearest?.description || currentDescription || '天氣',
+                    icon: nearest?.icon || current.icon || '01d',
+                    description: nearest?.description || current.description || '天氣',
+                    precipitationProbability: Number.isFinite(nearest?.pop) ? Math.round(nearest.pop * 100) : 0,
                 };
             };
 
-            return Array.from({ length: 6 }, (_, index) => {
+            // 擴大到未來 24 小時（OWM 5 天/3 小時預報資料充足，逐小時內插），
+            // 讓「今晚 vs 明早哪個時段更適合跑」這類決策有足夠的時間視野可比較
+            return Array.from({ length: 24 }, (_, index) => {
                 const targetTime = firstHourTime + index * 60 * 60 * 1000;
-                const weather = findNearestWeather(targetTime);
+                const block = findNearestBlock(targetTime);
                 return {
                     time: new Date(targetTime).toISOString(),
-                    temperature: Math.round(estimateTempAt(targetTime)),
-                    icon: weather.icon,
-                    description: weather.description,
+                    temperature: Math.round(estimateAt(tempAnchors, targetTime, current.temperature)),
+                    icon: block.icon,
+                    description: block.description,
+                    humidity: Math.round(estimateAt(humidityAnchors, targetTime, current.humidity)),
+                    windSpeed: Math.round(estimateAt(windAnchors, targetTime, current.windSpeed)),
+                    feelsLike: Math.round(estimateAt(feelsLikeAnchors, targetTime, current.feelsLike)),
+                    precipitationProbability: block.precipitationProbability,
                 };
             });
         } catch (error) {
-            console.error('未來 6 小時氣溫查詢錯誤:', error);
+            console.error('未來 6 小時天氣查詢錯誤:', error);
             return [];
         }
     }
@@ -872,6 +914,7 @@ class WeatherService {
             description: data.weather[0].description,
             humidity: data.main.humidity,
             windSpeed: Math.round(data.wind.speed * 3.6), // 轉換為 km/h
+            windDeg: Number.isFinite(data.wind?.deg) ? Math.round(data.wind.deg) : undefined,
             icon: data.weather[0].icon,
             feelsLike: Math.round(data.main.feels_like),
             pressure: data.main.pressure,

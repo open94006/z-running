@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRightLeft } from 'lucide-react';
+import { Card, TextField, Button, Tag } from '../components/ui';
 
 const PitchingCalculator: React.FC = () => {
     const [mph, setMph] = useState<string>('');
@@ -58,72 +59,60 @@ const PitchingCalculator: React.FC = () => {
     ];
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl mx-auto transition-colors duration-300">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">公里-英里換算</h2>
+        <Card className="max-w-2xl mx-auto p-6!">
+            <h2 className="text-2xl font-bold mb-6 text-ink border-b border-border pb-2">公里-英里換算</h2>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="w-full text-center">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">公里 (KPH)</label>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            value={kph}
-                            onChange={handleKphChange}
-                            onFocus={() => setActiveField('kph')}
-                            className={`w-full p-4 border bg-white dark:bg-gray-900 text-3xl font-bold text-blue-600 dark:text-blue-400 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-center placeholder-gray-400 dark:placeholder-gray-500 ${
-                                activeField === 'kph' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-300 dark:border-gray-600'
-                            }`}
-                            placeholder="0"
-                        />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-bold">km/h</span>
-                    </div>
-                </div>
+                <TextField
+                    label="公里 (KPH)"
+                    unit="km/h"
+                    type="number"
+                    value={kph}
+                    onChange={handleKphChange}
+                    onFocus={() => setActiveField('kph')}
+                    active={activeField === 'kph'}
+                    centered
+                    placeholder="0"
+                    className="text-3xl font-bold text-primary"
+                    containerClassName="flex-1 text-center"
+                />
 
-                <div className="text-gray-400 dark:text-gray-500 rotate-90 md:rotate-0">
+                <div className="text-ink-subtle rotate-90 md:rotate-0">
                     <ArrowRightLeft size={32} />
                 </div>
 
-                <div className="w-full text-center">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">英里 (MPH)</label>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            value={mph}
-                            onChange={handleMphChange}
-                            onFocus={() => setActiveField('mph')}
-                            className={`w-full p-4 border bg-white dark:bg-gray-900 text-3xl font-bold text-red-600 dark:text-red-400 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all text-center placeholder-gray-400 dark:placeholder-gray-500 ${
-                                activeField === 'mph' ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 dark:border-gray-600'
-                            }`}
-                            placeholder="0"
-                        />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-bold">mph</span>
-                    </div>
-                </div>
+                <TextField
+                    label="英里 (MPH)"
+                    unit="mph"
+                    type="number"
+                    value={mph}
+                    onChange={handleMphChange}
+                    onFocus={() => setActiveField('mph')}
+                    active={activeField === 'mph'}
+                    centered
+                    placeholder="0"
+                    className="text-3xl font-bold text-accent"
+                    containerClassName="flex-1 text-center"
+                />
             </div>
 
             <div className="mt-8 space-y-6">
                 <div className="flex justify-center gap-4">
-                    <button
-                        onClick={() => adjustSpeed(-1)}
-                        className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-sm"
-                    >
+                    <Button variant="soft" onClick={() => adjustSpeed(-1)}>
                         -1 {activeField.toUpperCase()}
-                    </button>
-                    <button
-                        onClick={() => adjustSpeed(1)}
-                        className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-sm"
-                    >
+                    </Button>
+                    <Button variant="soft" onClick={() => adjustSpeed(1)}>
                         +1 {activeField.toUpperCase()}
-                    </button>
+                    </Button>
                 </div>
 
                 <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 text-center">常見球速參考</p>
+                    <p className="text-sm text-ink-muted mb-3 text-center">常見球速參考</p>
                     <div className="flex justify-center flex-wrap gap-2">
                         {presetSpeeds.map((preset) => {
                             const isKph = preset.unit === 'km/h';
                             return (
-                                <button
+                                <Tag
                                     key={`${preset.value}-${preset.unit}`}
                                     onClick={() => {
                                         const val = preset.value.toString();
@@ -137,20 +126,15 @@ const PitchingCalculator: React.FC = () => {
                                             setActiveField('mph');
                                         }
                                     }}
-                                    className={`px-4 py-2 rounded-full font-medium transition-colors ${
-                                        isKph
-                                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800'
-                                            : 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800'
-                                    }`}
                                 >
                                     {preset.value} {preset.unit}
-                                </button>
+                                </Tag>
                             );
                         })}
                     </div>
                 </div>
             </div>
-        </div>
+        </Card>
     );
 };
 

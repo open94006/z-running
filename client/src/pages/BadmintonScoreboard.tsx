@@ -29,6 +29,7 @@ const ShuttlecockIcon = ({
 
 import clsx from "clsx";
 import { useAlert } from "../components/AlertContext";
+import { Button, Card, Modal, Notice, TextField } from "../components/ui";
 
 type Team = "Red" | "Blue";
 
@@ -351,29 +352,24 @@ const BadmintonScoreboard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-1.5 md:space-y-4 p-1 md:p-4 max-w-4xl mx-auto h-full overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="flex flex-col items-center gap-1.5 md:gap-4 p-1 md:p-4 max-w-4xl mx-auto h-full overflow-hidden bg-app">
       {/* 頂部控制欄 */}
-      <div className="w-full flex justify-between items-center bg-white dark:bg-gray-800 px-3 py-1 md:py-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors">
+      <Card className="w-full flex justify-between items-center px-3 py-1 md:py-3 rounded-xl!">
         <div className="flex space-x-2 items-center">
-          <button
-            onClick={toggleMode}
-            className="flex items-center space-x-1 px-1.5 py-0.5 md:px-2 md:py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors text-[10px] md:text-base font-bold"
-          >
+          <Button variant="soft" size="sm" onClick={toggleMode} className="text-[10px] md:text-sm gap-1">
             {isDoubles ? <Users size={14} /> : <User size={14} />}
             <span>{isDoubles ? "雙打" : "單打"}</span>
-          </button>
+          </Button>
 
-          <div className="flex items-center space-x-1.5 ml-2 md:ml-4 bg-gray-100 dark:bg-gray-700/50 px-1.5 py-0.5 rounded-md border border-transparent dark:border-gray-600">
-            <span className="text-[10px] md:text-sm font-bold text-gray-500 dark:text-gray-400">
+          <div className="flex items-center space-x-1.5 ml-2 md:ml-4 bg-surface-3 px-1.5 py-0.5 rounded-md">
+            <span className="text-[10px] md:text-sm font-bold text-ink-muted">
               局數
             </span>
             <div className="flex items-center space-x-1">
               <span className="text-red-600 dark:text-red-500 font-black text-xs md:text-lg">
                 {setsRed}
               </span>
-              <span className="text-gray-400 dark:text-gray-500 text-[10px]">
-                -
-              </span>
+              <span className="text-ink-subtle text-[10px]">-</span>
               <span className="text-blue-600 dark:text-blue-500 font-black text-xs md:text-lg">
                 {setsBlue}
               </span>
@@ -381,7 +377,11 @@ const BadmintonScoreboard: React.FC = () => {
           </div>
         </div>
         <div className="flex space-x-1.5">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
+            iconOnly
+            aria-label="重置比賽"
             onClick={() => {
               showConfirm({
                 title: "重置比賽",
@@ -391,18 +391,14 @@ const BadmintonScoreboard: React.FC = () => {
                 onConfirm: fullReset,
               });
             }}
-            className="p-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <RotateCcw className="w-3.5 h-3.5 md:w-6 md:h-6" />
-          </button>
-          <button
-            onClick={() => setShowRules(true)}
-            className="p-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <HelpCircle className="w-3.5 h-3.5 md:w-6 md:h-6" />
-          </button>
+            <RotateCcw />
+          </Button>
+          <Button variant="ghost" size="sm" iconOnly aria-label="規則說明" onClick={() => setShowRules(true)}>
+            <HelpCircle />
+          </Button>
         </div>
-      </div>
+      </Card>
 
       {/* 記分板區域 */}
       <div className="grid grid-cols-2 gap-1.5 md:gap-4 w-full flex-1 min-h-0">
@@ -412,7 +408,7 @@ const BadmintonScoreboard: React.FC = () => {
             "relative flex flex-col items-center justify-center p-1 md:p-4 rounded-lg md:rounded-3xl shadow-sm md:shadow-xl transition-all duration-300 border md:border-4 h-full",
             servingTeam === "Red"
               ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-              : "border-transparent bg-white dark:bg-gray-800"
+              : "border-transparent bg-surface"
           )}
         >
           {servingTeam === "Red" && (
@@ -441,7 +437,7 @@ const BadmintonScoreboard: React.FC = () => {
 
           <div
             onClick={() => updateScore("Red")}
-            className="text-4xl md:text-8xl font-black text-gray-800 dark:text-white cursor-pointer select-none active:scale-95 transition-transform leading-none"
+            className="text-4xl md:text-8xl font-black text-ink cursor-pointer select-none active:scale-95 transition-transform leading-none"
           >
             {scoreRed}
           </div>
@@ -455,7 +451,7 @@ const BadmintonScoreboard: React.FC = () => {
                   currentServer === positions.Red.left &&
                   servingTeam === "Red"
                   ? "bg-red-500 dark:bg-red-600 text-white border-red-500 dark:border-red-600 shadow-sm"
-                  : "bg-gray-100 dark:bg-gray-700/80 border-transparent dark:text-gray-300"
+                  : "bg-surface-3 border-transparent text-ink"
               )}
             >
               <div className="text-[6px] md:text-xs opacity-70">左</div>
@@ -472,7 +468,7 @@ const BadmintonScoreboard: React.FC = () => {
                   currentServer === positions.Red.right &&
                   servingTeam === "Red"
                   ? "bg-red-500 dark:bg-red-600 text-white border-red-500 dark:border-red-600 shadow-sm"
-                  : "bg-gray-100 dark:bg-gray-700/80 border-transparent dark:text-gray-300"
+                  : "bg-surface-3 border-transparent text-ink"
               )}
             >
               <div className="text-[6px] md:text-xs opacity-70">右</div>
@@ -489,7 +485,7 @@ const BadmintonScoreboard: React.FC = () => {
             "relative flex flex-col items-center justify-center p-1 md:p-4 rounded-lg md:rounded-3xl shadow-sm md:shadow-xl transition-all duration-300 border md:border-4 h-full",
             servingTeam === "Blue"
               ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-              : "border-transparent bg-white dark:bg-gray-800"
+              : "border-transparent bg-surface"
           )}
         >
           {servingTeam === "Blue" && (
@@ -520,7 +516,7 @@ const BadmintonScoreboard: React.FC = () => {
           </div>
           <div
             onClick={() => updateScore("Blue")}
-            className="text-4xl md:text-8xl font-black text-gray-800 dark:text-white cursor-pointer select-none active:scale-95 transition-transform leading-none"
+            className="text-4xl md:text-8xl font-black text-ink cursor-pointer select-none active:scale-95 transition-transform leading-none"
           >
             {scoreBlue}
           </div>
@@ -534,7 +530,7 @@ const BadmintonScoreboard: React.FC = () => {
                   currentServer === positions.Blue.left &&
                   servingTeam === "Blue"
                   ? "bg-blue-500 dark:bg-blue-600 text-white border-blue-500 dark:border-blue-600 shadow-sm"
-                  : "bg-gray-100 dark:bg-gray-700/80 border-transparent dark:text-gray-300"
+                  : "bg-surface-3 border-transparent text-ink"
               )}
             >
               <div className="text-[6px] md:text-xs opacity-70">左</div>
@@ -551,7 +547,7 @@ const BadmintonScoreboard: React.FC = () => {
                   currentServer === positions.Blue.right &&
                   servingTeam === "Blue"
                   ? "bg-blue-500 dark:bg-blue-600 text-white border-blue-500 dark:border-blue-600 shadow-sm"
-                  : "bg-gray-100 dark:bg-gray-700/80 border-transparent dark:text-gray-300"
+                  : "bg-surface-3 border-transparent text-ink"
               )}
             >
               <div className="text-[6px] md:text-xs opacity-70">右</div>
@@ -564,8 +560,8 @@ const BadmintonScoreboard: React.FC = () => {
       </div>
 
       {/* 狀態提示 */}
-      <div className="w-full bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 px-3 py-0.5 rounded-lg text-center transition-colors">
-        <p className="text-yellow-800 dark:text-white font-bold text-[9px] md:text-sm">
+      <Notice icon={Info} tone="info" className="w-full py-1.5 md:py-2.5">
+        <p className="font-bold text-[9px] md:text-sm">
           發球：
           <span className="text-blue-600 dark:text-blue-400">
             {currentServer}
@@ -577,195 +573,159 @@ const BadmintonScoreboard: React.FC = () => {
           <button
             onClick={undo}
             disabled={history.length === 0}
-            className="ml-2 md:ml-4 text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 disabled:opacity-30 transition-colors underline font-bold"
+            className="ml-2 md:ml-4 text-ink-subtle hover:text-primary disabled:opacity-30 transition-colors underline font-bold"
           >
             上一步
           </button>
         </p>
-      </div>
+      </Notice>
 
       {/* 編輯球員名稱彈窗 */}
       {editingPlayer && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setEditingPlayer(null)}
-          />
-          <div className="relative bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl shadow-2xl p-6 border dark:border-gray-700">
-            <h3 className="text-xl font-bold mb-4 dark:text-white">
-              編輯球員名稱
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  請輸入名稱 ({editingPlayer.team === "Red" ? "紅方" : "藍方"} -{" "}
-                  {editingPlayer.pos === "right" ? "右側" : "左側"})
-                </label>
-                <input
-                  type="text"
-                  value={tempPlayerName}
-                  onChange={(e) => setTempPlayerName(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") savePlayerName();
-                    if (e.key === "Escape") setEditingPlayer(null);
-                  }}
-                />
-              </div>
-              <div className="flex space-x-3 pt-2">
-                <button
-                  onClick={() => setEditingPlayer(null)}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  取消
-                </button>
-                <button
-                  onClick={savePlayerName}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors"
-                >
-                  儲存
-                </button>
-              </div>
+        <Modal onClose={() => setEditingPlayer(null)} maxWidth="max-w-sm" zIndex={70}>
+          <h3 className="text-xl font-bold mb-4 text-ink">編輯球員名稱</h3>
+          <div className="space-y-4">
+            <TextField
+              label={`請輸入名稱 (${editingPlayer.team === "Red" ? "紅方" : "藍方"} - ${editingPlayer.pos === "right" ? "右側" : "左側"})`}
+              value={tempPlayerName}
+              onChange={(e) => setTempPlayerName(e.target.value)}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") savePlayerName();
+                if (e.key === "Escape") setEditingPlayer(null);
+              }}
+            />
+            <div className="flex space-x-3 pt-2">
+              <Button variant="secondary" block onClick={() => setEditingPlayer(null)}>
+                取消
+              </Button>
+              <Button variant="primary" block onClick={savePlayerName}>
+                儲存
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* 規則彈窗 */}
       {showRules && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 md:p-4">
-          <div
-            className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm transition-opacity"
-            onClick={() => setShowRules(false)}
-          />
-          <div className="relative bg-white dark:bg-gray-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-4 md:p-8 border dark:border-gray-700">
-            <div className="flex justify-between items-center mb-4 md:mb-6 border-b pb-3 md:pb-4 dark:border-gray-700">
-              <h3 className="text-lg md:text-2xl font-bold dark:text-white flex items-center">
-                <Info className="mr-2 text-blue-500 dark:text-blue-400" />{" "}
-                羽球規則快速查閱
-              </h3>
-              <button
-                onClick={() => setShowRules(false)}
-                className="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-4 md:space-y-6 text-sm md:text-base text-gray-700 dark:text-gray-300">
-              <section>
-                <h4 className="font-bold text-blue-600 dark:text-blue-400 border-b dark:border-gray-700 pb-1 mb-2">
-                  一、基本規則
-                </h4>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>
-                    <strong>三局兩勝制</strong>，先得 21 分者獲勝。
-                  </li>
-                  <li>
-                    <strong>每球得分制</strong>，贏球即得 1 分。
-                  </li>
-                  <li>
-                    <strong>20:20 平手</strong>時，需連得 2 分獲勝，最高 30 分。
-                  </li>
-                </ul>
-              </section>
-
-              <section>
-                <h4 className="font-bold text-blue-600 dark:text-blue-400 border-b dark:border-gray-700 pb-1 mb-2">
-                  二、發球站位 (重要邏輯)
-                </h4>
-                <div className="bg-gray-50 dark:bg-gray-900/80 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
-                  <p className="font-bold mb-2 text-xs md:text-sm">
-                    看發球方該隊分數：
-                  </p>
-                  <ul className="list-none space-y-2 text-xs md:text-sm">
-                    <li className="flex items-center">
-                      <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded text-center font-bold mr-3 border border-green-200 dark:border-green-800">
-                        偶數
-                      </span>
-                      站在{" "}
-                      <strong className="text-green-600 dark:text-green-400 mx-1">
-                        右發球區
-                      </strong>{" "}
-                      發球
-                    </li>
-                    <li className="flex items-center">
-                      <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded text-center font-bold mr-3 border border-orange-200 dark:border-orange-800">
-                        奇數
-                      </span>
-                      站在{" "}
-                      <strong className="text-orange-600 dark:text-orange-400 mx-1">
-                        左發球區
-                      </strong>{" "}
-                      發球
-                    </li>
-                  </ul>
-                </div>
-              </section>
-
-              <section>
-                <h4 className="font-bold text-blue-600 dark:text-blue-400 border-b dark:border-gray-700 pb-1 mb-2">
-                  三、球拍與發球規定
-                </h4>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>
-                    <strong>擊球點</strong>：發球瞬間，擊球點必須低於發球者的
-                    <strong>最低一根肋骨</strong>。
-                  </li>
-                  <li>
-                    <strong>球拍指向</strong>：發球瞬間，球拍桿必須
-                    <strong>指向下方</strong>。
-                  </li>
-                  <li>
-                    <strong>連續動作</strong>：發球動作必須一次性且
-                    <strong>連續</strong>，不可有假動作或停頓。
-                  </li>
-                  <li>
-                    <strong>雙腳位置</strong>：發球與接發球時，雙腳必須
-                    <strong>同時踩在地面</strong>且不可踩線。
-                  </li>
-                </ul>
-              </section>
-
-              <section>
-                <h4 className="font-bold text-blue-600 dark:text-blue-400 border-b dark:border-gray-700 pb-1 mb-2">
-                  四、網子與違例規則
-                </h4>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>
-                    <strong>觸網違例</strong>：比賽進行中，球拍、身體或衣服
-                    <strong>不可觸碰網子</strong>、網繩或網柱。
-                  </li>
-                  <li>
-                    <strong>過網擊球</strong>：不可在球<strong>尚未過網</strong>
-                    前，將球拍伸過網擊球。
-                  </li>
-                  <li>
-                    <strong>侵入場地</strong>
-                    ：球拍或身體不可從網下侵入對方場地干擾對手。
-                  </li>
-                </ul>
-              </section>
-
-              <div className="bg-blue-50 dark:bg-blue-900/40 p-3 md:p-4 rounded-xl border border-blue-100 dark:border-blue-800 text-xs md:text-sm">
-                <p className="font-bold text-blue-800 dark:text-blue-200 mb-1">
-                  💡 快速記憶口訣：
-                </p>
-                <p className="italic text-blue-700 dark:text-blue-300">
-                  「看分數、分奇偶、右偶左奇」、「單打走內、雙打走外」、「雙打一隊一次發球權」
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setShowRules(false)}
-              className="w-full mt-6 md:mt-8 bg-blue-600 dark:bg-blue-500 text-white py-3 md:py-4 rounded-xl font-bold hover:bg-blue-700 dark:hover:bg-blue-600 transition-all shadow-lg active:scale-95"
-            >
-              了解，開始比賽
-            </button>
+        <Modal onClose={() => setShowRules(false)} maxWidth="max-w-2xl" zIndex={60} className="max-h-[90vh] overflow-y-auto p-4 md:p-8">
+          <div className="flex justify-between items-center mb-4 md:mb-6 border-b border-border pb-3 md:pb-4">
+            <h3 className="text-lg md:text-2xl font-bold text-ink flex items-center">
+              <Info className="mr-2 text-primary" /> 羽球規則快速查閱
+            </h3>
+            <Button variant="ghost" iconOnly aria-label="關閉" onClick={() => setShowRules(false)}>
+              ✕
+            </Button>
           </div>
-        </div>
+
+          <div className="space-y-4 md:space-y-6 text-sm md:text-base text-ink-muted">
+            <section>
+              <h4 className="font-bold text-primary border-b border-border pb-1 mb-2">
+                一、基本規則
+              </h4>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>
+                  <strong>三局兩勝制</strong>，先得 21 分者獲勝。
+                </li>
+                <li>
+                  <strong>每球得分制</strong>，贏球即得 1 分。
+                </li>
+                <li>
+                  <strong>20:20 平手</strong>時，需連得 2 分獲勝，最高 30 分。
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h4 className="font-bold text-primary border-b border-border pb-1 mb-2">
+                二、發球站位 (重要邏輯)
+              </h4>
+              <div className="bg-surface-2 p-3 rounded-lg border border-border">
+                <p className="font-bold mb-2 text-xs md:text-sm">
+                  看發球方該隊分數：
+                </p>
+                <ul className="list-none space-y-2 text-xs md:text-sm">
+                  <li className="flex items-center">
+                    <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded text-center font-bold mr-3 border border-green-200 dark:border-green-800">
+                      偶數
+                    </span>
+                    站在{" "}
+                    <strong className="text-green-600 dark:text-green-400 mx-1">
+                      右發球區
+                    </strong>{" "}
+                    發球
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded text-center font-bold mr-3 border border-orange-200 dark:border-orange-800">
+                      奇數
+                    </span>
+                    站在{" "}
+                    <strong className="text-orange-600 dark:text-orange-400 mx-1">
+                      左發球區
+                    </strong>{" "}
+                    發球
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section>
+              <h4 className="font-bold text-primary border-b border-border pb-1 mb-2">
+                三、球拍與發球規定
+              </h4>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>
+                  <strong>擊球點</strong>：發球瞬間，擊球點必須低於發球者的
+                  <strong>最低一根肋骨</strong>。
+                </li>
+                <li>
+                  <strong>球拍指向</strong>：發球瞬間，球拍桿必須
+                  <strong>指向下方</strong>。
+                </li>
+                <li>
+                  <strong>連續動作</strong>：發球動作必須一次性且
+                  <strong>連續</strong>，不可有假動作或停頓。
+                </li>
+                <li>
+                  <strong>雙腳位置</strong>：發球與接發球時，雙腳必須
+                  <strong>同時踩在地面</strong>且不可踩線。
+                </li>
+              </ul>
+            </section>
+
+            <section>
+              <h4 className="font-bold text-primary border-b border-border pb-1 mb-2">
+                四、網子與違例規則
+              </h4>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>
+                  <strong>觸網違例</strong>：比賽進行中，球拍、身體或衣服
+                  <strong>不可觸碰網子</strong>、網繩或網柱。
+                </li>
+                <li>
+                  <strong>過網擊球</strong>：不可在球<strong>尚未過網</strong>
+                  前，將球拍伸過網擊球。
+                </li>
+                <li>
+                  <strong>侵入場地</strong>
+                  ：球拍或身體不可從網下侵入對方場地干擾對手。
+                </li>
+              </ul>
+            </section>
+
+            <Notice icon={Info} tone="info">
+              <p className="font-bold mb-1">💡 快速記憶口訣：</p>
+              <p className="italic">
+                「看分數、分奇偶、右偶左奇」、「單打走內、雙打走外」、「雙打一隊一次發球權」
+              </p>
+            </Notice>
+          </div>
+
+          <Button variant="primary" block size="lg" className="mt-6 md:mt-8" onClick={() => setShowRules(false)}>
+            了解，開始比賽
+          </Button>
+        </Modal>
       )}
     </div>
   );
