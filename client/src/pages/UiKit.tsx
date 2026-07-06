@@ -273,7 +273,7 @@ function UiKit() {
                                 {
                                     level: '絕佳',
                                     score: 92,
-                                    color: 'from-[#047857] to-[#2dd4bf]',
+                                    color: 'from-[#16a34a] to-[#34d399]',
                                     emoji: '🏃‍♂️💨',
                                     badge: '92',
                                     desc: '溫度・PM2.5・濕度 全部達標',
@@ -281,7 +281,7 @@ function UiKit() {
                                 {
                                     level: '良好',
                                     score: 74,
-                                    color: 'from-[#2563eb] to-[#60a5fa]',
+                                    color: 'from-[#174feb] to-[#60a5fa]',
                                     emoji: '🏃‍♂️',
                                     badge: '74',
                                     desc: '溫度・風速 達標',
@@ -289,7 +289,7 @@ function UiKit() {
                                 {
                                     level: '尚可',
                                     score: 51,
-                                    color: 'from-[#f59e0b] to-[#d97706]',
+                                    color: 'from-[#da6627] to-[#fb923c]',
                                     emoji: '🚶‍♂️',
                                     badge: '51',
                                     desc: '濕度偏高，建議適度補水',
@@ -297,7 +297,7 @@ function UiKit() {
                                 {
                                     level: '不佳',
                                     score: 28,
-                                    color: 'from-[#dc2626] to-[#fb7185]',
+                                    color: 'from-[#c82929] to-[#f87171]',
                                     emoji: '⚠️',
                                     badge: '28',
                                     desc: 'PM2.5 過高，建議改室內訓練',
@@ -308,27 +308,27 @@ function UiKit() {
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-8 -mt-8" />
                                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-2xl -ml-6 -mb-6" />
                                 <div className="relative z-10">
-                                    <p className="text-xs font-bold opacity-75 uppercase tracking-widest mb-3">跑步狀態與評分</p>
+                                    <p className="text-xs font-bold opacity-75 uppercase tracking-widest mb-3 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">跑步狀態與評分</p>
                                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                                        <p className="text-5xl font-black tracking-tighter drop-shadow-md leading-none">{item.level}</p>
+                                        <p className="text-5xl font-black tracking-tighter [text-shadow:0_2px_8px_rgba(0,0,0,0.5)] leading-none">{item.level}</p>
                                         <div className="inline-flex items-end gap-1.5 px-3 py-2 rounded-2xl bg-white/15 border border-white/20 backdrop-blur-[16px] shadow-lg self-start">
-                                            <span className="text-[11px] font-bold text-white/65 mb-1">綜合分數</span>
-                                            <span className="text-4xl font-black tracking-tight leading-none text-white">{item.badge}</span>
-                                            <span className="text-sm font-bold text-white/65 mb-1">/100</span>
+                                            <span className="text-[12px] font-bold text-white/85 mb-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">綜合分數</span>
+                                            <span className="text-4xl font-black tracking-tight leading-none text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.5)]">{item.badge}</span>
+                                            <span className="text-sm font-bold text-white/85 mb-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">/100</span>
                                         </div>
                                     </div>
-                                    <p className="mt-3 text-sm text-white/80">{item.desc}</p>
+                                    <p className="mt-3 text-sm text-white/90 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">{item.desc}</p>
                                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
                                         <div className="rounded-xl border border-white/[18%] bg-white/10 px-3 py-2">
-                                            <p className="text-[10px] font-semibold text-white/65">當前氣溫</p>
-                                            <p className="text-2xl font-black leading-tight text-white">28°C</p>
-                                            <p className="text-[10px] text-white/55 mt-0.5">體感 30°C・露點 22°C</p>
+                                            <p className="text-[12px] font-semibold text-white/85 [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]">當前氣溫</p>
+                                            <p className="text-2xl font-black leading-tight text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.45)]">28°C</p>
+                                            <p className="text-[12px] text-white/80 mt-0.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">體感 30°C・露點 22°C</p>
                                         </div>
                                         <div className="rounded-xl border border-white/[18%] bg-white/10 px-3 py-2 sm:col-span-2">
-                                            <p className="text-[10px] font-semibold text-white/65">🏃 配速建議</p>
-                                            <p className="text-sm font-black leading-tight mt-1">
-                                                <span className="text-white/55 text-[11px] font-semibold">6'00"/km</span>
-                                                <span className="mx-1.5 text-white/40">→</span>
+                                            <p className="text-[12px] font-semibold text-white/85 [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]">🏃 配速建議</p>
+                                            <p className="text-sm font-black leading-tight mt-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
+                                                <span className="text-white/75 text-[12px] font-semibold">6'00"/km</span>
+                                                <span className="mx-1.5 text-white/65">→</span>
                                                 <span className="text-white text-base">6'10"~6'30"/km</span>
                                             </p>
                                         </div>

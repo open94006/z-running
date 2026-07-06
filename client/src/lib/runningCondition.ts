@@ -236,7 +236,7 @@ export const getRunningCondition = (temp: number, aqi: number | undefined, pm25:
         return {
             level: 'excellent',
             text: '絕佳',
-            color: 'from-[#047857] to-[#2dd4bf]',
+            color: 'from-[#16a34a] to-[#34d399]',
             emoji: '🏃‍♂️💨',
             brightness: calcBrightness(score, 80, 100),
             issues,
@@ -249,7 +249,7 @@ export const getRunningCondition = (temp: number, aqi: number | undefined, pm25:
         return {
             level: 'good',
             text: '良好',
-            color: 'from-[#2563eb] to-[#60a5fa]',
+            color: 'from-[#174feb] to-[#60a5fa]',
             emoji: '🏃‍♂️',
             brightness: calcBrightness(score, 60, 80),
             issues,
@@ -262,7 +262,7 @@ export const getRunningCondition = (temp: number, aqi: number | undefined, pm25:
         return {
             level: 'fair',
             text: '尚可',
-            color: 'from-[#f59e0b] to-[#d97706]',
+            color: 'from-[#da6627] to-[#fb923c]',
             emoji: '🚶‍♂️',
             brightness: calcBrightness(score, 40, 60),
             issues,
@@ -274,7 +274,7 @@ export const getRunningCondition = (temp: number, aqi: number | undefined, pm25:
     return {
         level: 'poor',
         text: '不佳',
-        color: 'from-[#dc2626] to-[#fb7185]',
+        color: 'from-[#c82929] to-[#f87171]',
         emoji: '⚠️',
         brightness: calcBrightness(score, 0, 40),
         issues,

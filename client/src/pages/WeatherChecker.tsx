@@ -755,7 +755,9 @@ function WeatherChecker() {
                                             <div>
                                                 <div className="flex items-center gap-1.5 text-white/95 drop-shadow-sm">
                                                     <MapPin size={18} className="drop-shadow-sm" />
-                                                    <h2 className="text-xl lg:text-2xl font-black leading-tight tracking-tight">{locationDisplay.title || weather.location}</h2>
+                                                    <h2 className="text-xl lg:text-2xl font-black leading-tight tracking-tight [text-shadow:0_2px_6px_rgba(0,0,0,0.45)]">
+                                                        {locationDisplay.title || weather.location}
+                                                    </h2>
                                                     <button
                                                         type="button"
                                                         onClick={toggleCurrentFavorite}
@@ -766,24 +768,28 @@ function WeatherChecker() {
                                                         <Heart size={16} className={isCurrentFavorite ? 'text-rose-300 fill-rose-300' : 'text-white'} />
                                                     </button>
                                                 </div>
-                                                {locationDisplay.subtitle && <p className="text-xs font-medium text-white/80 ml-6 mt-0.5">{locationDisplay.subtitle}</p>}
+                                                {locationDisplay.subtitle && (
+                                                    <p className="text-xs font-medium text-white/90 ml-6 mt-0.5 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">{locationDisplay.subtitle}</p>
+                                                )}
                                             </div>
-                                            <p className="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-1 rounded-lg backdrop-blur-sm shadow-sm inline-flex items-center gap-1">
+                                            <p className="text-[12px] font-bold text-white/90 bg-white/20 px-2 py-1 rounded-lg backdrop-blur-sm shadow-sm inline-flex items-center gap-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
                                                 🕐 {formatTime(weather.timestamp)}
                                             </p>
                                         </div>
 
                                         <div className="mt-5 mb-2 lg:mt-6 lg:mb-3">
-                                            <p className="text-xs font-bold opacity-80 uppercase tracking-widest mb-2 ml-1">跑步狀態與評分</p>
+                                            <p className="text-xs font-bold opacity-80 uppercase tracking-widest mb-2 ml-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">跑步狀態與評分</p>
                                             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                                                <p className="text-5xl sm:text-6xl font-black tracking-tighter drop-shadow-md leading-none">{runningCondition.text}</p>
+                                                <p className="text-5xl sm:text-6xl font-black tracking-tighter [text-shadow:0_2px_8px_rgba(0,0,0,0.5)] leading-none">{runningCondition.text}</p>
                                                 <div className="inline-flex items-end gap-1.5 px-3 py-2 rounded-2xl bg-white/20 border border-white/25 backdrop-blur-sm shadow-lg self-start sm:self-auto">
-                                                    <span className="text-[11px] font-bold text-white/90 mb-1">綜合分數</span>
-                                                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none text-white">{runningCondition.score}</span>
-                                                    <span className="text-sm font-bold text-white/90 mb-1">/100</span>
+                                                    <span className="text-[12px] font-bold text-white/90 mb-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">綜合分數</span>
+                                                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.5)]">
+                                                        {runningCondition.score}
+                                                    </span>
+                                                    <span className="text-sm font-bold text-white/90 mb-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">/100</span>
                                                 </div>
                                             </div>
-                                            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold text-white/95">
+                                            <div className="mt-3 flex flex-wrap gap-2 text-[12px] font-semibold text-white/95">
                                                 {[
                                                     { label: '溫度佳', penalty: runningCondition.penalties.temperature },
                                                     { label: 'PM2.5 佳', penalty: runningCondition.penalties.airQuality },
@@ -793,46 +799,49 @@ function WeatherChecker() {
                                                 ]
                                                     .filter((item) => item.penalty === 0)
                                                     .map((item) => (
-                                                        <span key={item.label} className="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-white/90 shadow-sm backdrop-blur-sm">
+                                                        <span
+                                                            key={item.label}
+                                                            className="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-white/90 shadow-sm backdrop-blur-sm [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]"
+                                                        >
                                                             ✓ {item.label}
                                                         </span>
                                                     ))}
                                             </div>
                                             <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
                                                 <div className="rounded-xl border border-white/18 bg-white/10 px-3 py-2">
-                                                    <p className="text-[10px] font-semibold text-white/65">當前氣溫</p>
-                                                    <p className="text-2xl font-black leading-tight text-white">{weather.temperature}°C</p>
-                                                    <p className="text-[10px] text-white/55 mt-0.5">
+                                                    <p className="text-[12px] font-semibold text-white/85 [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]">當前氣溫</p>
+                                                    <p className="text-2xl font-black leading-tight text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.45)]">{weather.temperature}°C</p>
+                                                    <p className="text-[12px] text-white/80 mt-0.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
                                                         體感 {weather.feelsLike}°C・露點 {runningCondition.dewPoint}°C
                                                     </p>
                                                 </div>
                                                 <div className="rounded-xl border border-white/18 bg-white/10 px-3 py-2 sm:col-span-2">
-                                                    <p className="text-[10px] font-semibold text-white/65">🏃 配速建議</p>
+                                                    <p className="text-[12px] font-semibold text-white/85 [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]">🏃 配速建議</p>
                                                     {concretePace ? (
                                                         <>
-                                                            <p className="text-sm font-black leading-tight mt-1">
-                                                                <span className="text-white/55 text-[11px] font-semibold">{formatPace(runnerProfile.targetPaceSecPerKm!)}/km</span>
-                                                                <span className="mx-1.5 text-white/40">→</span>
+                                                            <p className="text-sm font-black leading-tight mt-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
+                                                                <span className="text-white/75 text-[12px] font-semibold">{formatPace(runnerProfile.targetPaceSecPerKm!)}/km</span>
+                                                                <span className="mx-1.5 text-white/65">→</span>
                                                                 <span className="text-white text-base">
                                                                     {formatPace(concretePace.minSecPerKm)}~{formatPace(concretePace.maxSecPerKm)}/km
                                                                 </span>
                                                             </p>
-                                                            {paceAdjustment && <p className="text-[10px] text-white/55 mt-0.5 leading-snug">{paceAdjustment.message}</p>}
+                                                            {paceAdjustment && <p className="text-[12px] text-white/80 mt-0.5 leading-snug">{paceAdjustment.message}</p>}
                                                         </>
                                                     ) : paceAdjustment ? (
-                                                        <p className="text-xs font-semibold text-white/88 mt-1 leading-snug">{paceAdjustment.message}</p>
+                                                        <p className="text-xs font-semibold text-white/95 mt-1 leading-snug">{paceAdjustment.message}</p>
                                                     ) : (
-                                                        <p className="text-[10px] text-white/50 mt-1">於設定區輸入目標配速，即可取得當日建議</p>
+                                                        <p className="text-[12px] text-white/75 mt-1">於設定區輸入目標配速，即可取得當日建議</p>
                                                     )}
                                                     {sunTimes && (
-                                                        <p className="text-[10px] text-white/55 mt-1.5 leading-snug">
+                                                        <p className="text-[12px] text-white/80 mt-1.5 leading-snug">
                                                             🌅 日出 {formatClockTime(sunTimes.sunrise)}・🌇 日落 {formatClockTime(sunTimes.sunset)}
                                                             {suggestEveningRun && <span className="font-semibold">・建議日落後再跑，體感較涼爽</span>}
                                                         </p>
                                                     )}
                                                 </div>
                                             </div>
-                                            {weather.source && <p className="text-[10px] text-white/45 text-right mt-2 font-medium">資料來源：{weather.source}</p>}
+                                            {weather.source && <p className="text-[12px] text-white/70 text-right mt-2 font-medium">資料來源：{weather.source}</p>}
                                         </div>
                                     </div>
                                 </div>
