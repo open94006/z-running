@@ -56,14 +56,7 @@ const HEAT_SIDE_TOLERANCE_FACTOR: Record<RunnerTolerance, number> = {
 };
 
 // 跑步建議等級
-export const getRunningCondition = (
-    temp: number,
-    aqi: number | undefined,
-    pm25: number | undefined,
-    humidity: number,
-    windSpeed: number,
-    tolerance: RunnerTolerance = 'normal',
-) => {
+export const getRunningCondition = (temp: number, aqi: number | undefined, pm25: number | undefined, humidity: number, windSpeed: number, tolerance: RunnerTolerance = 'normal') => {
     let score = 100;
     const issues: string[] = [];
     let airQualityHint = '空氣資料不足';
@@ -236,10 +229,60 @@ export const getRunningCondition = (
     score = Math.max(0, Math.min(100, score));
     const roundedDewPoint = Math.round(dewPoint * 10) / 10;
 
-    if (score >= 80) return { level: 'excellent', text: '絕佳', color: 'from-green-500 to-emerald-600', emoji: '🏃‍♂️💨', issues, score, penalties, airQualityHint, dewPoint: roundedDewPoint };
-    if (score >= 60) return { level: 'good', text: '良好', color: 'from-blue-500 to-cyan-600', emoji: '🏃‍♂️', issues, score, penalties, airQualityHint, dewPoint: roundedDewPoint };
-    if (score >= 40) return { level: 'fair', text: '尚可', color: 'from-yellow-500 to-orange-500', emoji: '🚶‍♂️', issues, score, penalties, airQualityHint, dewPoint: roundedDewPoint };
-    return { level: 'poor', text: '不佳', color: 'from-red-500 to-pink-600', emoji: '⚠️', issues, score, penalties, airQualityHint, dewPoint: roundedDewPoint };
+    // 分數亮度：同一等級內分數愈高愈鮮明（0.85 → 1.10）
+    const calcBrightness = (s: number, min: number, max: number) => parseFloat((0.85 + ((s - min) / (max - min)) * 0.25).toFixed(2));
+
+    if (score >= 80)
+        return {
+            level: 'excellent',
+            text: '絕佳',
+            color: 'from-[#047857] to-[#2dd4bf]',
+            emoji: '🏃‍♂️💨',
+            brightness: calcBrightness(score, 80, 100),
+            issues,
+            score,
+            penalties,
+            airQualityHint,
+            dewPoint: roundedDewPoint,
+        };
+    if (score >= 60)
+        return {
+            level: 'good',
+            text: '良好',
+            color: 'from-[#2563eb] to-[#60a5fa]',
+            emoji: '🏃‍♂️',
+            brightness: calcBrightness(score, 60, 80),
+            issues,
+            score,
+            penalties,
+            airQualityHint,
+            dewPoint: roundedDewPoint,
+        };
+    if (score >= 40)
+        return {
+            level: 'fair',
+            text: '尚可',
+            color: 'from-[#f59e0b] to-[#d97706]',
+            emoji: '🚶‍♂️',
+            brightness: calcBrightness(score, 40, 60),
+            issues,
+            score,
+            penalties,
+            airQualityHint,
+            dewPoint: roundedDewPoint,
+        };
+    return {
+        level: 'poor',
+        text: '不佳',
+        color: 'from-[#dc2626] to-[#fb7185]',
+        emoji: '⚠️',
+        brightness: calcBrightness(score, 0, 40),
+        issues,
+        score,
+        penalties,
+        airQualityHint,
+        dewPoint: roundedDewPoint,
+    };
 };
 
 // PM2.5 官方對照表（EPA / 台灣 moenv 標準），供 UI 門檻與評分共用同一份數字來源

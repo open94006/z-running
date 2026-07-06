@@ -59,10 +59,10 @@ const PitchingCalculator: React.FC = () => {
     ];
 
     return (
-        <Card className="max-w-2xl mx-auto p-6!">
-            <h2 className="text-2xl font-bold mb-6 text-ink border-b border-border pb-2">公里-英里換算</h2>
+        <Card className="max-w-2xl mx-auto p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-6 text-ink border-b border-border pb-2">公里-英里換算</h2>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 sm:gap-6">
                 <TextField
                     label="公里 (KPH)"
                     unit="km/h"
@@ -73,12 +73,12 @@ const PitchingCalculator: React.FC = () => {
                     active={activeField === 'kph'}
                     centered
                     placeholder="0"
-                    className="text-3xl font-bold text-primary"
-                    containerClassName="flex-1 text-center"
+                    className="text-2xl sm:text-3xl font-bold text-primary"
+                    containerClassName="w-full md:flex-1 text-center"
                 />
 
-                <div className="text-ink-subtle rotate-90 md:rotate-0">
-                    <ArrowRightLeft size={32} />
+                <div className="w-full md:w-auto flex items-center justify-center text-ink-subtle shrink-0 py-1">
+                    <ArrowRightLeft size={32} className="rotate-90 md:rotate-0" />
                 </div>
 
                 <TextField
@@ -91,17 +91,17 @@ const PitchingCalculator: React.FC = () => {
                     active={activeField === 'mph'}
                     centered
                     placeholder="0"
-                    className="text-3xl font-bold text-accent"
-                    containerClassName="flex-1 text-center"
+                    className="text-2xl sm:text-3xl font-bold text-accent"
+                    containerClassName="w-full md:flex-1 text-center"
                 />
             </div>
 
             <div className="mt-8 space-y-6">
-                <div className="flex justify-center gap-4">
-                    <Button variant="soft" onClick={() => adjustSpeed(-1)}>
+                <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-center sm:gap-4">
+                    <Button variant="soft" className="w-full sm:w-auto" onClick={() => adjustSpeed(-1)}>
                         -1 {activeField.toUpperCase()}
                     </Button>
-                    <Button variant="soft" onClick={() => adjustSpeed(1)}>
+                    <Button variant="soft" className="w-full sm:w-auto" onClick={() => adjustSpeed(1)}>
                         +1 {activeField.toUpperCase()}
                     </Button>
                 </div>

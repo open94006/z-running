@@ -29,11 +29,11 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ showLabel = true }) => {
     }, [isDark]);
 
     return (
-        <div className={clsx('flex items-center space-x-3', showLabel ? 'justify-end w-full' : 'justify-center')}>
-            {showLabel && <span className="text-xs font-medium text-gray-400 whitespace-nowrap transition-opacity duration-300">{isDark ? '暗黑模式' : '明亮模式'}</span>}
+        <div className={clsx('flex items-center justify-start w-full', showLabel ? 'space-x-3' : 'space-x-0')}>
+            {/* {showLabel && <span className="text-xs font-medium text-gray-400 whitespace-nowrap transition-opacity duration-300">{isDark ? '暗黑模式' : '明亮模式'}</span>} */}
             <button
                 onClick={() => setIsDark(!isDark)}
-                className={clsx('p-2 rounded-lg transition-all duration-300 focus:outline-none', 'bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700')}
+                className={clsx('p-2 rounded-lg focus:outline-none', 'bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700')}
                 aria-label="Toggle Dark Mode"
             >
                 {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-blue-400" />}

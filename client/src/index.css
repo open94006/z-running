@@ -170,54 +170,59 @@
 }
 
 :root {
-    /* semantic action colors — muted & supportive, not vivid (a companion relaying
-       today's run conditions, not a sports poster) */
-    --primary: #35748f;
-    --primary-hover: #2b5f77;
-    --primary-soft: #e8f0f3;
-    --success: #4f9a72;
-    --success-soft: #eaf3ee;
-    --warn: #c08a3e;
-    --warn-soft: #f7f0e4;
-    --danger: #c05f54;
-    --danger-soft: #f6ebe9;
-    --info: #4a8bab;
-    --info-soft: #e9f1f5;
-    --accent-purple: #7d76a6;
+    /* semantic action colors — clean, vivid, athletic */
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-soft: #dbeafe;
+    --success: #16a34a;
+    --success-soft: #dcfce7;
+    --warn: #d97706;
+    --warn-soft: #fef3c7;
+    --danger: #dc2626;
+    --danger-soft: #fee2e2;
+    --info: #0284c7;
+    --info-soft: #e0f2fe;
+    --accent-purple: #7c3aed;
 
-    /* neutrals — cool slate, faint blue bias */
-    --app-bg: #eef1f4;
+    /* neutrals — crisp white, pure grey scale */
+    --app-bg: #f9fafb;
     --surface: #ffffff;
-    --surface-2: #f6f8fa;
-    --surface-3: #eef1f4;
-    --border: #e0e5ea;
-    --border-strong: #cbd2d9;
-    --text: #1e2a33;
-    --text-muted: #56636e;
-    --text-subtle: #93a0aa;
+    --surface-2: #fafafa;
+    --surface-3: #f3f4f6;
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+    --text: #111827;
+    --text-muted: #4b5563;
+    --text-subtle: #6b7280;
 }
 
 .dark {
-    --primary: #6aa6c2;
-    --primary-hover: #7fb6d0;
-    --primary-soft: #1a2a33;
-    --success: #6bb891;
-    --success-soft: #16302433;
-    --warn: #d3ac6d;
-    --warn-soft: #3a2c1533;
-    --danger: #d0867c;
-    --danger-soft: #3a201d33;
-    --info: #74add0;
-    --info-soft: #15303c33;
-    --accent-purple: #a49dc4;
+    --primary: #60a5fa;
+    --primary-hover: #93c5fd;
+    --primary-soft: #1e3a8a;
+    --success: #4ade80;
+    --success-soft: #14532d;
+    --warn: #fbbf24;
+    --warn-soft: #78350f;
+    --danger: #f87171;
+    --danger-soft: #7f1d1d;
+    --info: #38bdf8;
+    --info-soft: #0c4a6e;
+    --accent-purple: #a78bfa;
 
-    --app-bg: #0d151a;
-    --surface: #18222a;
-    --surface-2: #101a20;
-    --surface-3: #0f181d;
-    --border: #2a363e;
-    --border-strong: #3c4a54;
-    --text: #e7edf1;
-    --text-muted: #a9b6c0;
-    --text-subtle: #6f7d88;
+    --app-bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #0f172a;
+    --surface-3: #162032;
+    --border: #334155;
+    --border-strong: #475569;
+    --text: #f8fafc;
+    --text-muted: #cbd5e1;
+    --text-subtle: #94a3b8;
+}
+
+/* base — 確保所有未明確設色的文字跟隨 semantic token，暗黑模式下不回退成瀏覽器預設黑字 */
+html {
+    color: var(--text);
+    background-color: var(--app-bg);
 }

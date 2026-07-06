@@ -46,6 +46,7 @@ function UiKit() {
                 <NavLink href="#badges">徽章 / 標籤 / 膠囊</NavLink>
                 <NavLink href="#guides">建議卡 / 提示條</NavLink>
                 <NavLink href="#states">空 / 載入態</NavLink>
+                <NavLink href="#scoring-card">評分卡</NavLink>
             </nav>
 
             <div className="min-w-0">
@@ -79,10 +80,22 @@ function UiKit() {
 
                 <Section id="type" num="02" title="字級" desc="沿用系統字，不引入 webfont。用字重與字距建立層級。">
                     <div className="space-y-3">
-                        <div className="flex items-baseline gap-4"><span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">display</span><span className="text-4xl font-extrabold tracking-tight">28°C</span></div>
-                        <div className="flex items-baseline gap-4"><span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">heading</span><span className="text-xl font-extrabold tracking-tight">未來 24 小時可跑度</span></div>
-                        <div className="flex items-baseline gap-4"><span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">body</span><span className="text-sm">目前為東北風，逆風時配速可能受影響。</span></div>
-                        <div className="flex items-baseline gap-4"><span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">label</span><span className="text-xs font-bold uppercase tracking-wider text-ink-muted">跑步狀態與評分</span></div>
+                        <div className="flex items-baseline gap-4">
+                            <span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">display</span>
+                            <span className="text-4xl font-extrabold tracking-tight">28°C</span>
+                        </div>
+                        <div className="flex items-baseline gap-4">
+                            <span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">heading</span>
+                            <span className="text-xl font-extrabold tracking-tight">未來 24 小時可跑度</span>
+                        </div>
+                        <div className="flex items-baseline gap-4">
+                            <span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">body</span>
+                            <span className="text-sm">目前為東北風，逆風時配速可能受影響。</span>
+                        </div>
+                        <div className="flex items-baseline gap-4">
+                            <span className="font-mono text-[10px] text-ink-subtle w-24 shrink-0">label</span>
+                            <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">跑步狀態與評分</span>
+                        </div>
                     </div>
                 </Section>
 
@@ -96,17 +109,31 @@ function UiKit() {
                         <Button variant="soft">雙打 / 單打</Button>
                         <Button variant="soft-success">+5 KG</Button>
                         <Button variant="soft-danger">-5 KG</Button>
-                        <Button variant="primary" iconOnly aria-label="定位"><MapPin /></Button>
-                        <Button variant="secondary" iconOnly aria-label="設定"><Settings /></Button>
+                        <Button variant="primary" iconOnly aria-label="定位">
+                            <MapPin />
+                        </Button>
+                        <Button variant="secondary" iconOnly aria-label="設定">
+                            <Settings />
+                        </Button>
                     </div>
                     <p className="text-[10.5px] font-mono uppercase tracking-wider text-ink-subtle mb-2.5">sizes</p>
                     <div className="flex flex-wrap items-center gap-2.5">
-                        <Button variant="primary" size="sm">Small</Button>
+                        <Button variant="primary" size="sm">
+                            Small
+                        </Button>
                         <Button variant="primary">Medium</Button>
-                        <Button variant="primary" size="lg">Large</Button>
-                        <Button variant="secondary" size="sm" iconOnly aria-label="sm"><Search /></Button>
-                        <Button variant="secondary" iconOnly aria-label="md"><Search /></Button>
-                        <Button variant="secondary" size="lg" iconOnly aria-label="lg"><Search /></Button>
+                        <Button variant="primary" size="lg">
+                            Large
+                        </Button>
+                        <Button variant="secondary" size="sm" iconOnly aria-label="sm">
+                            <Search />
+                        </Button>
+                        <Button variant="secondary" iconOnly aria-label="md">
+                            <Search />
+                        </Button>
+                        <Button variant="secondary" size="lg" iconOnly aria-label="lg">
+                            <Search />
+                        </Button>
                     </div>
                 </Section>
 
@@ -180,13 +207,7 @@ function UiKit() {
                     <p className="text-[10.5px] font-mono uppercase tracking-wider text-ink-subtle mb-2.5">chips · 可移除（最愛地點）</p>
                     <div className="flex flex-wrap gap-2">
                         {favorites.map((f) => (
-                            <Chip
-                                key={f.id}
-                                label={f.label}
-                                icon={MapPin}
-                                onSelect={() => {}}
-                                onRemove={() => setFavorites((prev) => prev.filter((x) => x.id !== f.id))}
-                            />
+                            <Chip key={f.id} label={f.label} icon={MapPin} onSelect={() => {}} onRemove={() => setFavorites((prev) => prev.filter((x) => x.id !== f.id))} />
                         ))}
                         {favorites.length === 0 && <span className="text-xs text-ink-subtle">（已全部移除，重新整理可還原示範）</span>}
                     </div>
@@ -240,6 +261,81 @@ function UiKit() {
                             <Skeleton className="w-4/5 h-8" />
                             <Skeleton className="w-3/5" />
                         </Card>
+                    </div>
+                </Section>
+
+                <Section id="scoring-card" num="10" title="評分卡（跑步狀態）— 新配色提案" desc="四種評分等級的漸層配色重新設計：使用對比度更高、更有活力的色彩。舊色在右側對照。">
+                    <div className="grid gap-4">
+                        {/* 新配色 */}
+                        <p className="text-[10.5px] font-mono uppercase tracking-wider text-ink-subtle mb-1">✦ 新配色提案</p>
+                        {(
+                            [
+                                {
+                                    level: '絕佳',
+                                    score: 92,
+                                    color: 'from-[#047857] to-[#2dd4bf]',
+                                    emoji: '🏃‍♂️💨',
+                                    badge: '92',
+                                    desc: '溫度・PM2.5・濕度 全部達標',
+                                },
+                                {
+                                    level: '良好',
+                                    score: 74,
+                                    color: 'from-[#2563eb] to-[#60a5fa]',
+                                    emoji: '🏃‍♂️',
+                                    badge: '74',
+                                    desc: '溫度・風速 達標',
+                                },
+                                {
+                                    level: '尚可',
+                                    score: 51,
+                                    color: 'from-[#f59e0b] to-[#d97706]',
+                                    emoji: '🚶‍♂️',
+                                    badge: '51',
+                                    desc: '濕度偏高，建議適度補水',
+                                },
+                                {
+                                    level: '不佳',
+                                    score: 28,
+                                    color: 'from-[#dc2626] to-[#fb7185]',
+                                    emoji: '⚠️',
+                                    badge: '28',
+                                    desc: 'PM2.5 過高，建議改室內訓練',
+                                },
+                            ] as const
+                        ).map((item) => (
+                            <div key={item.level} className={`bg-linear-to-r ${item.color} rounded-3xl p-5 text-white relative overflow-hidden`}>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-8 -mt-8" />
+                                <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-2xl -ml-6 -mb-6" />
+                                <div className="relative z-10">
+                                    <p className="text-xs font-bold opacity-75 uppercase tracking-widest mb-3">跑步狀態與評分</p>
+                                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                                        <p className="text-5xl font-black tracking-tighter drop-shadow-md leading-none">{item.level}</p>
+                                        <div className="inline-flex items-end gap-1.5 px-3 py-2 rounded-2xl bg-white/15 border border-white/20 backdrop-blur-[16px] shadow-lg self-start">
+                                            <span className="text-[11px] font-bold text-white/65 mb-1">綜合分數</span>
+                                            <span className="text-4xl font-black tracking-tight leading-none text-white">{item.badge}</span>
+                                            <span className="text-sm font-bold text-white/65 mb-1">/100</span>
+                                        </div>
+                                    </div>
+                                    <p className="mt-3 text-sm text-white/80">{item.desc}</p>
+                                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                        <div className="rounded-xl border border-white/[18%] bg-white/10 px-3 py-2">
+                                            <p className="text-[10px] font-semibold text-white/65">當前氣溫</p>
+                                            <p className="text-2xl font-black leading-tight text-white">28°C</p>
+                                            <p className="text-[10px] text-white/55 mt-0.5">體感 30°C・露點 22°C</p>
+                                        </div>
+                                        <div className="rounded-xl border border-white/[18%] bg-white/10 px-3 py-2 sm:col-span-2">
+                                            <p className="text-[10px] font-semibold text-white/65">🏃 配速建議</p>
+                                            <p className="text-sm font-black leading-tight mt-1">
+                                                <span className="text-white/55 text-[11px] font-semibold">6'00"/km</span>
+                                                <span className="mx-1.5 text-white/40">→</span>
+                                                <span className="text-white text-base">6'10"~6'30"/km</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </Section>
             </div>
