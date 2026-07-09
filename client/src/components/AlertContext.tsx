@@ -106,7 +106,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AlertContext.Provider value={{ showAlert, showConfirm }}>
       {children}
-      <div className="fixed top-4 right-4 z-100 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+      <div className="fixed top-4 inset-x-4 sm:left-auto sm:right-4 z-100 flex flex-col gap-2 sm:max-w-sm w-auto pointer-events-none">
         {alerts.map((alert) => {
           const Icon = iconMap[alert.type];
           return (
