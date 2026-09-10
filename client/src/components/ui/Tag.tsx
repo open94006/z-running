@@ -10,9 +10,12 @@ export function Tag({ selected, className, ...props }: TagProps) {
     return (
         <button
             type="button"
+            aria-pressed={selected}
             className={cn(
-                'px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer',
-                selected ? 'bg-primary text-white' : 'bg-primary-soft text-primary hover:bg-primary/20',
+                'inline-flex items-center justify-center whitespace-nowrap min-h-9 px-3.5 py-1.5 rounded-pill text-xs font-semibold cursor-pointer t-press hit-44',
+                '[@media(hover:hover)]:active:translate-y-px',
+                selected ? 'bg-primary text-primary-ink' : 'bg-primary-soft text-primary-on-soft [@media(hover:hover)]:hover:bg-primary/20',
+                'disabled:opacity-45 disabled:cursor-not-allowed',
                 className,
             )}
             {...props}

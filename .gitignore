@@ -35,6 +35,7 @@ Thumbs.db
 .idea/
 .vscode/
 .claude/
+.hallmark/
 
 # 個人筆記
 PLAYGROUND.md

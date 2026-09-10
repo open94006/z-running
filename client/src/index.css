@@ -1,162 +1,199 @@
 @import 'tailwindcss';
 
-@theme {
-    --color-*: initial;
-    /* Tailwind utilities like `text-white` rely on `--color-white`.
-     Since we reset `--color-*` above, we must re-declare base colors used by the app. */
-    --color-white: #ffffff;
-    --color-black: #000000;
-    --color-gray-50: #f9fafb;
-    --color-gray-100: #f3f4f6;
-    --color-gray-200: #e5e7eb;
-    --color-gray-300: #d1d5db;
-    --color-gray-400: #9ca3af;
-    --color-gray-500: #6b7280;
-    --color-gray-600: #4b5563;
-    --color-gray-700: #374151;
-    --color-gray-800: #1f2937;
-    --color-gray-900: #111827;
-    --color-blue-50: #eff6ff;
-    --color-blue-100: #dbeafe;
-    --color-blue-200: #bfdbfe;
-    --color-blue-300: #93c5fd;
-    --color-blue-400: #60a5fa;
-    --color-blue-500: #3b82f6;
-    --color-blue-600: #2563eb;
-    --color-blue-700: #174feb;
-    --color-blue-800: #1e40af;
-    --color-blue-900: #1e3a8a;
-    --color-red-50: #fef2f2;
-    --color-red-100: #fee2e2;
-    --color-red-200: #fecaca;
-    --color-red-300: #fca5a5;
-    --color-red-400: #f87171;
-    --color-red-500: #ef4444;
-    --color-red-600: #dc2626;
-    --color-red-700: #c82929;
-    --color-red-800: #991b1b;
-    --color-red-900: #7f1d1d;
-    --color-green-50: #f0fdf4;
-    --color-green-100: #dcfce7;
-    --color-green-200: #bbf7d0;
-    --color-green-300: #86efac;
-    --color-green-400: #4ade80;
-    --color-green-500: #22c55e;
-    --color-green-600: #16a34a;
-    --color-green-700: #15803d;
-    --color-green-800: #166534;
-    --color-green-900: #14532d;
-    --color-yellow-50: #fefce8;
-    --color-yellow-100: #fef9c3;
-    --color-yellow-200: #fef08a;
-    --color-yellow-300: #fde047;
-    --color-yellow-400: #facc15;
-    --color-yellow-500: #eab308;
-    --color-yellow-600: #ca8a04;
-    --color-yellow-700: #a16207;
-    --color-yellow-800: #854d0e;
-    --color-yellow-900: #713f12;
-    --color-orange-50: #fff7ed;
-    --color-orange-100: #ffedd5;
-    --color-orange-200: #fed7aa;
-    --color-orange-300: #fdba74;
-    --color-orange-400: #fb923c;
-    --color-orange-500: #f97316;
-    --color-orange-600: #ea580c;
-    --color-orange-700: #da6627;
-    --color-orange-800: #9a3412;
-    --color-orange-900: #7c2d12;
-    --color-purple-50: #faf5ff;
-    --color-purple-100: #f3e8ff;
-    --color-purple-200: #e9d5ff;
-    --color-purple-300: #d8b4fe;
-    --color-purple-400: #c084fc;
-    --color-purple-500: #a855f7;
-    --color-purple-600: #9333ea;
-    --color-purple-700: #7e22ce;
-    --color-purple-800: #6b21a8;
-    --color-purple-900: #581c87;
-    --color-slate-50: #f8fafc;
-    --color-slate-100: #f1f5f9;
-    --color-slate-200: #e2e8f0;
-    --color-slate-300: #cbd5e1;
-    --color-slate-400: #94a3b8;
-    --color-slate-500: #64748b;
-    --color-slate-600: #475569;
-    --color-slate-700: #334155;
-    --color-slate-800: #1e293b;
-    --color-slate-900: #0f172a;
-    --color-emerald-50: #ecfdf5;
-    --color-emerald-100: #d1fae5;
-    --color-emerald-200: #a7f3d0;
-    --color-emerald-300: #6ee7b7;
-    --color-emerald-400: #34d399;
-    --color-emerald-500: #10b981;
-    --color-emerald-600: #059669;
-    --color-emerald-700: #047857;
-    --color-emerald-800: #065f46;
-    --color-emerald-900: #064e3b;
-    --color-cyan-50: #ecfeff;
-    --color-cyan-100: #cffafe;
-    --color-cyan-200: #a5f3fc;
-    --color-cyan-300: #67e8f9;
-    --color-cyan-400: #22d3ee;
-    --color-cyan-500: #06b6d4;
-    --color-cyan-600: #0891b2;
-    --color-cyan-700: #0e7490;
-    --color-cyan-800: #155e75;
-    --color-cyan-900: #164e63;
-    --color-pink-50: #fdf2f8;
-    --color-pink-100: #fce7f3;
-    --color-pink-200: #fbcfe8;
-    --color-pink-300: #f9a8d4;
-    --color-pink-400: #f472b6;
-    --color-pink-500: #ec4899;
-    --color-pink-600: #db2777;
-    --color-pink-700: #be185d;
-    --color-pink-800: #9d174d;
-    --color-pink-900: #831843;
-    --color-amber-50: #fffbeb;
-    --color-amber-100: #fef3c7;
-    --color-amber-200: #fde68a;
-    --color-amber-300: #fcd34d;
-    --color-amber-400: #fbbf24;
-    --color-amber-500: #f59e0b;
-    --color-amber-600: #d97706;
-    --color-amber-700: #b45309;
-    --color-amber-800: #92400e;
-    --color-amber-900: #78350f;
-    --color-sky-50: #f0f9ff;
-    --color-sky-100: #e0f2fe;
-    --color-sky-200: #bae6fd;
-    --color-sky-300: #7dd3fc;
-    --color-sky-400: #38bdf8;
-    --color-sky-500: #0ea5e9;
-    --color-sky-600: #0284c7;
-    --color-sky-700: #0369a1;
-    --color-sky-800: #075985;
-    --color-sky-900: #0c4a6e;
-}
+/* Hallmark · genre: editorial · theme: Sport (roman) · design-system: design.md
+ * designed-as-app · nav: N3 side-rail · footer: Ft2 inline
+ * families: Readout (Stat-Led) = /weather /badminton · Workbench = /running /weight /pitching /ui
+ * anchor hue 258 · accent cool by necessity — red is spoken for by `danger`
+ * pre-emit critique: P5 H5 E5 S5 R4 V4
+ *
+ * Semantic colours are plain custom properties (not @theme) so `.dark` can
+ * rebind them at runtime; @theme only exposes them as utilities.
+ * Put raw values in @theme and runtime dark mode breaks.
+ */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── design system tokens ──
-   Semantic colors are indirected through plain CSS custom properties (not @theme)
-   so .dark can redefine their values at runtime; @theme just exposes them as utilities
-   (bg-primary, text-ink-muted, border-border, ...). */
+:root {
+    /* ── brand / interactive ── */
+    --primary: oklch(52% 0.216 258);
+    --primary-hover: oklch(45% 0.2 258);
+    --primary-soft: oklch(94% 0.035 258);
+    --primary-ink: oklch(99% 0.004 255);
+    --focus: oklch(48% 0.22 258);
+
+    /* ── semantic · every fill ships its own -ink ── */
+    --success: oklch(55% 0.15 150);
+    --success-soft: oklch(95% 0.04 150);
+    --success-ink: oklch(99% 0.004 150);
+    --warn: oklch(62% 0.15 68);
+    --warn-soft: oklch(95.5% 0.045 80);
+    --warn-ink: oklch(18% 0.04 68);
+    --danger: oklch(53% 0.2 27);
+    --danger-soft: oklch(95% 0.03 27);
+    --danger-ink: oklch(99% 0.004 27);
+    --info: oklch(58% 0.12 225);
+    --info-soft: oklch(95% 0.03 225);
+    --info-ink: oklch(99% 0.004 225);
+    --accent-violet: oklch(55% 0.19 295);
+    --accent-soft: oklch(95% 0.035 295);
+    --accent-ink: oklch(99% 0.004 295);
+
+    /* Text sitting ON a -soft surface. The base colour is tuned to carry white
+       as a fill, which leaves it too light to read on its own pale tint —
+       measured at 3.3:1 for warn, 3.6:1 for info. Rule: -soft background pairs
+       with -on-soft text, never with the base token. */
+    --primary-on-soft: oklch(42% 0.19 258);
+    --success-on-soft: oklch(40% 0.13 150);
+    --warn-on-soft: oklch(42% 0.13 68);
+    --danger-on-soft: oklch(43% 0.18 27);
+    --info-on-soft: oklch(42% 0.12 225);
+    --accent-on-soft: oklch(43% 0.17 295);
+
+    /* ── surfaces + ink · all tinted toward the anchor, none zero-chroma ── */
+    --app-bg: oklch(96.5% 0.007 255);
+    --surface: oklch(99.2% 0.003 255);
+    --surface-2: oklch(97.6% 0.005 255);
+    --surface-3: oklch(94.2% 0.009 255);
+    --border: oklch(89% 0.011 255);
+    --border-strong: oklch(81% 0.013 255);
+    --text: oklch(21% 0.022 255);
+    --text-muted: oklch(44% 0.018 255);
+    --text-subtle: oklch(52% 0.016 255);
+
+    /* ── the side-rail is a declared dark surface, not a hardcoded grey ── */
+    --rail: oklch(22% 0.02 258);
+    --rail-2: oklch(28% 0.022 258);
+    --rail-border: oklch(34% 0.022 258);
+    --rail-ink: oklch(97% 0.006 255);
+    --rail-ink-muted: oklch(72% 0.016 255);
+
+    /* ── score bands · one solid per running-condition level.
+       Solid, not a gradient: Sport's divider language is bleed-colour and
+       oversized solid, and a fixed L guarantees the white ink passes without
+       a text-shadow propping it up. ── */
+    --score-excellent: oklch(48% 0.15 150);
+    --score-good: oklch(46% 0.17 258);
+    --score-fair: oklch(50% 0.15 62);
+    --score-poor: oklch(46% 0.19 27);
+    --score-ink: oklch(98% 0.005 255);
+
+    /* ── scoreboard sides · two opposed identities, not danger/primary ── */
+    --team-a: oklch(50% 0.19 27);
+    --team-a-soft: oklch(95% 0.03 27);
+    --team-b: oklch(48% 0.18 258);
+    --team-b-soft: oklch(94% 0.035 258);
+    --team-ink: oklch(98% 0.005 255);
+
+    /* ── AQI · a 5-step sequential ramp, so it gets a ramp rather than five
+       unrelated palette picks. Every step is dark enough for --aqi-ink. ── */
+    --aqi-1: oklch(48% 0.15 150);
+    --aqi-2: oklch(50% 0.13 100);
+    --aqi-3: oklch(50% 0.15 62);
+    --aqi-4: oklch(47% 0.19 27);
+    --aqi-5: oklch(44% 0.17 330);
+    --aqi-0: oklch(50% 0.02 255);
+    --aqi-ink: oklch(98% 0.005 255);
+
+    /* ── motion · Sport runs at 0.7× ── */
+    --dur-micro: 90ms;
+    --dur-short: 150ms;
+    --dur-long: 300ms;
+
+    /* ── z · six named levels, no freestyling ── */
+    --z-base: 1;
+    --z-raised: 10;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-modal: 400;
+    --z-toast: 500;
+}
+
+.dark {
+    --primary: oklch(70% 0.17 258);
+    --primary-hover: oklch(78% 0.15 258);
+    --primary-soft: oklch(30% 0.08 258);
+    --primary-ink: oklch(16% 0.02 258);
+    --focus: oklch(72% 0.17 258);
+
+    --success: oklch(72% 0.16 150);
+    --success-soft: oklch(28% 0.06 150);
+    --success-ink: oklch(15% 0.03 150);
+    --warn: oklch(78% 0.15 75);
+    --warn-soft: oklch(30% 0.06 68);
+    --warn-ink: oklch(16% 0.04 68);
+    --danger: oklch(68% 0.17 25);
+    --danger-soft: oklch(28% 0.07 25);
+    --danger-ink: oklch(15% 0.03 25);
+    --info: oklch(72% 0.13 225);
+    --info-soft: oklch(28% 0.06 225);
+    --info-ink: oklch(15% 0.03 225);
+    --accent-violet: oklch(72% 0.15 295);
+    --accent-soft: oklch(29% 0.07 295);
+    --accent-ink: oklch(15% 0.03 295);
+
+    /* -soft is a dark surface here, so -on-soft flips light. */
+    --primary-on-soft: oklch(88% 0.08 258);
+    --success-on-soft: oklch(88% 0.1 150);
+    --warn-on-soft: oklch(90% 0.09 75);
+    --danger-on-soft: oklch(88% 0.09 25);
+    --info-on-soft: oklch(89% 0.08 225);
+    --accent-on-soft: oklch(88% 0.08 295);
+
+    /* elevation is lighter, never darker */
+    --app-bg: oklch(15% 0.014 255);
+    --surface: oklch(19.5% 0.016 255);
+    --surface-2: oklch(16.8% 0.015 255);
+    --surface-3: oklch(24% 0.018 255);
+    --border: oklch(31% 0.017 255);
+    --border-strong: oklch(40% 0.017 255);
+    --text: oklch(95% 0.006 255);
+    --text-muted: oklch(77% 0.013 255);
+    --text-subtle: oklch(68% 0.015 255);
+
+    --team-a: oklch(70% 0.16 27);
+    --team-a-soft: oklch(28% 0.07 27);
+    --team-b: oklch(70% 0.15 258);
+    --team-b-soft: oklch(30% 0.08 258);
+    /* Team colours lighten in dark mode so they read against the dark surface,
+       which means their ink has to flip dark — same as --primary-ink. */
+    --team-ink: oklch(16% 0.02 258);
+
+    --rail: oklch(17.5% 0.016 258);
+    --rail-2: oklch(24% 0.018 258);
+    --rail-border: oklch(30% 0.018 258);
+    --rail-ink: oklch(95% 0.006 255);
+    --rail-ink-muted: oklch(68% 0.015 255);
+}
+
 @theme {
+    /* colour utilities — bg-primary, text-ink-muted, border-border, … */
     --color-primary: var(--primary);
     --color-primary-hover: var(--primary-hover);
     --color-primary-soft: var(--primary-soft);
+    --color-primary-ink: var(--primary-ink);
+    --color-focus: var(--focus);
+    --color-primary-on-soft: var(--primary-on-soft);
+    --color-success-on-soft: var(--success-on-soft);
+    --color-warn-on-soft: var(--warn-on-soft);
+    --color-danger-on-soft: var(--danger-on-soft);
+    --color-info-on-soft: var(--info-on-soft);
+    --color-accent-on-soft: var(--accent-on-soft);
+
     --color-success: var(--success);
     --color-success-soft: var(--success-soft);
+    --color-success-ink: var(--success-ink);
     --color-warn: var(--warn);
     --color-warn-soft: var(--warn-soft);
+    --color-warn-ink: var(--warn-ink);
     --color-danger: var(--danger);
     --color-danger-soft: var(--danger-soft);
+    --color-danger-ink: var(--danger-ink);
     --color-info: var(--info);
     --color-info-soft: var(--info-soft);
-    --color-accent: var(--accent-purple);
+    --color-info-ink: var(--info-ink);
+    --color-accent: var(--accent-violet);
+    --color-accent-soft: var(--accent-soft);
+    --color-accent-ink: var(--accent-ink);
 
     --color-app: var(--app-bg);
     --color-surface: var(--surface);
@@ -167,62 +204,229 @@
     --color-ink: var(--text);
     --color-ink-muted: var(--text-muted);
     --color-ink-subtle: var(--text-subtle);
+
+    --color-score-excellent: var(--score-excellent);
+    --color-score-good: var(--score-good);
+    --color-score-fair: var(--score-fair);
+    --color-score-poor: var(--score-poor);
+    --color-score-ink: var(--score-ink);
+    --color-team-a: var(--team-a);
+    --color-team-a-soft: var(--team-a-soft);
+    --color-team-b: var(--team-b);
+    --color-team-b-soft: var(--team-b-soft);
+    --color-team-ink: var(--team-ink);
+    --color-aqi-0: var(--aqi-0);
+    --color-aqi-1: var(--aqi-1);
+    --color-aqi-2: var(--aqi-2);
+    --color-aqi-3: var(--aqi-3);
+    --color-aqi-4: var(--aqi-4);
+    --color-aqi-5: var(--aqi-5);
+    --color-aqi-ink: var(--aqi-ink);
+
+    --color-rail: var(--rail);
+    --color-rail-2: var(--rail-2);
+    --color-rail-border: var(--rail-border);
+    --color-rail-ink: var(--rail-ink);
+    --color-rail-ink-muted: var(--rail-ink-muted);
+
+    /* type — Latin carries the condensed Sport voice, CJK carries it by weight */
+    --font-cjk: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'Heiti TC', sans-serif;
+    --font-display: 'Big Shoulders Display', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'Heiti TC', sans-serif;
+    --font-body: 'IBM Plex Sans', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'Heiti TC', sans-serif;
+
+    /* only additions to Tailwind's step ladder — the pages are written against it */
+    --text-2xs: 0.625rem; /* 10px · absolute floor, micro-labels only */
+    --text-display: clamp(2.25rem, 4vw + 1rem, 3.75rem);
+    --text-readout: clamp(3rem, 11vw, 6.5rem); /* one giant numeral per Readout page */
+
+    /* radius — sharpened for Sport; small steps unchanged, large steps pulled in */
+    --radius-pill: 999px;
+    --radius-lg: 8px;
+    --radius-xl: 10px;
+    --radius-2xl: 12px;
+    --radius-3xl: 16px;
+
+    /* easing — the three named curves; browser default `ease` is banned */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-:root {
-    /* semantic action colors — clean, vivid, athletic */
-    --primary: #2563eb;
-    --primary-hover: #174feb;
-    --primary-soft: #dbeafe;
-    --success: #16a34a;
-    --success-soft: #dcfce7;
-    --warn: #d97706;
-    --warn-soft: #fef3c7;
-    --danger: #dc2626;
-    --danger-soft: #fee2e2;
-    --info: #0284c7;
-    --info-soft: #e0f2fe;
-    --accent-purple: #7c3aed;
+@layer base {
+    html {
+        color: var(--text);
+        background-color: var(--app-bg);
+        font-family: var(--font-body);
+        /* clip, not hidden — hidden creates a scroll container and kills sticky */
+        overflow-x: clip;
+        -webkit-text-size-adjust: 100%;
+    }
 
-    /* neutrals — crisp white, pure grey scale */
-    --app-bg: #f9fafb;
-    --surface: #ffffff;
-    --surface-2: #fafafa;
-    --surface-3: #f3f4f6;
-    --border: #e5e7eb;
-    --border-strong: #d1d5db;
-    --text: #111827;
-    --text-muted: #4b5563;
-    --text-subtle: #6b7280;
+    body {
+        overflow-x: clip;
+    }
+
+    /* One rule gives every heading the display voice. Utilities still win on size
+     * and weight, so per-component overrides keep working. */
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: var(--font-display);
+        font-weight: 800;
+        letter-spacing: -0.015em;
+        /* floor 1.0 — condensed caps collide below it when a title wraps */
+        line-height: 1.1;
+    }
+
+    /* Display headers must break inside long words rather than push the page wide */
+    h1,
+    h2 {
+        overflow-wrap: anywhere;
+        min-width: 0;
+    }
+
+    /* Focus is the app's single largest pre-redesign defect. It is never removed,
+     * never animated, and always lands on the page via the 2px offset so it stays
+     * visible even on an accent-filled button. */
+    :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+        border-radius: inherit;
+    }
+
+    ::selection {
+        background: var(--primary-soft);
+        color: var(--text);
+    }
 }
 
-.dark {
-    --primary: #60a5fa;
-    --primary-hover: #93c5fd;
-    --primary-soft: #1e3a8a;
-    --success: #4ade80;
-    --success-soft: #14532d;
-    --warn: #fbbf24;
-    --warn-soft: #78350f;
-    --danger: #f87171;
-    --danger-soft: #7f1d1d;
-    --info: #38bdf8;
-    --info-soft: #0c4a6e;
-    --accent-purple: #a78bfa;
+@layer components {
+    /* Named-property transitions. `transition-all` is banned — it animates layout
+     * properties and fades the focus ring in, which defeats it. */
+    .t-press {
+        transition:
+            background-color var(--dur-micro) var(--ease-out),
+            border-color var(--dur-micro) var(--ease-out),
+            color var(--dur-micro) var(--ease-out),
+            transform var(--dur-micro) var(--ease-out),
+            box-shadow var(--dur-micro) var(--ease-out);
+    }
 
-    --app-bg: #0f172a;
-    --surface: #1e293b;
-    --surface-2: #0f172a;
-    --surface-3: #162032;
-    --border: #334155;
-    --border-strong: #475569;
-    --text: #f8fafc;
-    --text-muted: #cbd5e1;
-    --text-subtle: #94a3b8;
+    .t-surface {
+        transition:
+            background-color var(--dur-short) var(--ease-out),
+            border-color var(--dur-short) var(--ease-out),
+            color var(--dur-short) var(--ease-out);
+    }
+
+    /* Touch floor, modality-independent. Gating this on `pointer: coarse` was
+     * wrong: a touchscreen laptop reports a fine pointer and would have been
+     * left under the floor. The ::before expands the tap area to 44px without
+     * changing the visual size, so compact pills stay compact.
+     * Sized so it never overlaps a neighbour at the gaps these controls use. */
+    .hit-44 {
+        position: relative;
+    }
+
+    .hit-44::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        translate: -50% -50%;
+        width: max(100%, 44px);
+        height: max(100%, 44px);
+    }
+
+    .t-raise {
+        transition:
+            transform var(--dur-short) var(--ease-out),
+            box-shadow var(--dur-short) var(--ease-out),
+            border-color var(--dur-short) var(--ease-out);
+    }
 }
 
-/* base — 確保所有未明確設色的文字跟隨 semantic token，暗黑模式下不回退成瀏覽器預設黑字 */
-html {
-    color: var(--text);
-    background-color: var(--app-bg);
+@layer utilities {
+    .z-base {
+        z-index: var(--z-base);
+    }
+    .z-raised {
+        z-index: var(--z-raised);
+    }
+    .z-dropdown {
+        z-index: var(--z-dropdown);
+    }
+    .z-sticky {
+        z-index: var(--z-sticky);
+    }
+    .z-modal {
+        z-index: var(--z-modal);
+    }
+    .z-toast {
+        z-index: var(--z-toast);
+    }
+}
+
+/* Real keyframes. The previous build used `animate-in fade-in zoom-in` /
+ * `slide-in-from-right-4`, which need the tailwindcss-animate plugin — it was
+ * never installed, so the modal and the toast never animated at all. */
+@keyframes hm-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes hm-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(0.75rem);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes hm-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@layer components {
+    .a-pop {
+        animation: hm-pop var(--dur-long) var(--ease-out) both;
+    }
+
+    .a-slide-in {
+        animation: hm-slide-in var(--dur-long) var(--ease-out) both;
+    }
+}
+
+/* Global, not per-component. Spatial motion collapses; functional motion
+ * (skeletons, spinners) keeps running so loading still reads as loading. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 150ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 150ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Spatial motion collapses to opacity — the movement goes, the signal stays. */
+    .a-pop,
+    .a-slide-in {
+        animation-name: hm-fade;
+    }
 }

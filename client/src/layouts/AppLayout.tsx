@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Dumbbell, Activity, Trophy, Cloud } from 'lucide-react';
+import { Menu, X, Dumbbell, Activity, Trophy, Cloud, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import ThemeToggle from '../components/ThemeToggle';
@@ -30,24 +30,28 @@ const SidebarContent: React.FC<{
     setIsSidebarOpen: (isOpen: boolean) => void;
 }> = ({ location, isDesktopSidebarCollapsed, setIsSidebarOpen }) => (
     <>
-        <div className="flex items-center p-4 h-12 border-b border-gray-700 bg-gray-900 transition-colors duration-300">
-            <div className="flex items-center space-x-2 w-full justify-start">
-                <div className="shrink-0 overflow-hidden rounded-lg w-8 h-8">
-                    <img src="/runner_icon.jpg" alt="Logo" className="w-full h-full object-cover" />
+        <div className="flex items-center h-14 px-4 border-b border-rail-border shrink-0">
+            <div className="flex items-center gap-2 w-full min-w-0">
+                <div className="shrink-0 overflow-hidden rounded-md w-8 h-8">
+                    <img src="/runner_icon.jpg" alt="" width={32} height={32} className="w-full h-full object-cover" />
                 </div>
-                {/* Use inline style for color to force override if Tailwind utility fails due to specificity, though !text-white should work */}
-                <span className={clsx('font-bold text-xl !text-white whitespace-nowrap overflow-hidden', isDesktopSidebarCollapsed ? 'hidden' : 'ml-2')} style={{ color: '#ffffff' }}>
+                {/* The rail is a declared surface, so its foreground is a token.
+                    No !important, no inline hex — the colour has an owner now. */}
+                <span className={clsx('font-display font-extrabold text-2xl tracking-tight text-rail-ink whitespace-nowrap overflow-hidden', isDesktopSidebarCollapsed && 'hidden')}>
                     Z-Running
                 </span>
             </div>
-            {/* Mobile Close Button inside sidebar */}
-            <button onClick={() => setIsSidebarOpen(false)} className="md:hidden absolute right-4 p-1 rounded-md hover:bg-gray-700 text-gray-300 focus:outline-none">
-                <X size={24} />
+            <button
+                onClick={() => setIsSidebarOpen(false)}
+                aria-label="關閉選單"
+                className="md:hidden shrink-0 grid place-items-center w-11 h-11 -mr-2 rounded-lg text-rail-ink-muted cursor-pointer t-press [@media(hover:hover)]:hover:bg-rail-2 [@media(hover:hover)]:hover:text-rail-ink"
+            >
+                <X size={22} />
             </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4 bg-gray-900 transition-colors duration-300">
-            <ul className="space-y-2 px-2">
+        <nav aria-label="主選單" className="flex-1 overflow-y-auto py-4">
+            <ul className="space-y-1 px-2">
                 {NAV_ITEMS.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
@@ -55,11 +59,15 @@ const SidebarContent: React.FC<{
                             <Link
                                 to={item.path}
                                 onClick={() => setIsSidebarOpen(false)}
-                                className={clsx('flex items-center p-3 rounded-lg group h-12', isActive ? 'bg-blue-600 !text-white' : 'text-gray-400 hover:bg-gray-800 hover:!text-white')}
+                                aria-current={isActive ? 'page' : undefined}
+                                className={clsx(
+                                    'flex items-center gap-3 h-12 px-3 rounded-lg whitespace-nowrap t-surface',
+                                    isActive ? 'bg-primary text-primary-ink font-semibold' : 'text-rail-ink-muted [@media(hover:hover)]:hover:bg-rail-2 [@media(hover:hover)]:hover:text-rail-ink',
+                                )}
                                 title={isDesktopSidebarCollapsed ? item.name : undefined}
                             >
-                                <item.icon size={24} className={clsx('shrink-0 transition-colors duration-200', isActive ? '!text-white' : 'text-gray-400 group-hover:!text-white')} />
-                                <span className={clsx('font-medium whitespace-nowrap overflow-hidden', isDesktopSidebarCollapsed ? 'hidden' : 'ml-3')}>{item.name}</span>
+                                <item.icon size={22} className="shrink-0" />
+                                <span className={clsx('font-medium overflow-hidden', isDesktopSidebarCollapsed && 'hidden')}>{item.name}</span>
                             </Link>
                         </li>
                     );
@@ -67,12 +75,8 @@ const SidebarContent: React.FC<{
             </ul>
         </nav>
 
-        <div className="p-4 border-t border-gray-700 bg-gray-900 transition-colors duration-300">
-            <div className="flex items-center justify-start w-full">
-                <div className="w-full">
-                    <ThemeToggle showLabel={!isDesktopSidebarCollapsed} />
-                </div>
-            </div>
+        <div className="p-3 border-t border-rail-border shrink-0">
+            <ThemeToggle showLabel={!isDesktopSidebarCollapsed} />
         </div>
     </>
 );
@@ -82,37 +86,46 @@ const AppLayout: React.FC = () => {
     const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false); // Desktop collapse state
     const location = useLocation();
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+    const toggleDesktopSidebar = () => setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
 
-    const toggleDesktopSidebar = () => {
-        setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
-    };
+    // Routes outside the menu still need a title — falling back to the wordmark
+    // duplicated the rail's logotype in the header.
+    const OFF_MENU_TITLES: Record<string, string> = { '/ui': '元件庫' };
+    const pageTitle = NAV_ITEMS.find((item) => item.path === location.pathname)?.name ?? OFF_MENU_TITLES[location.pathname] ?? 'Z-Running';
 
     return (
-        <div className="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden transition-colors duration-300">
-            {/* Sidebar - Desktop */}
+        // dvh, not vh — iOS counts the retracting toolbar in 100vh and the bottom
+        // of the scroll region ends up under browser chrome.
+        <div className="flex h-dvh bg-app overflow-hidden">
+            {/* N3 Side-rail — desktop */}
             <aside
                 className={clsx(
-                    'hidden md:flex bg-gray-900 shadow-md flex-col z-20 transition-all duration-500 ease-in-out h-full border-r border-gray-700',
+                    // Width is a layout property; animating it thrashes layout every
+                    // frame. The rail snaps and the content reflows once.
+                    'hidden md:flex bg-rail flex-col z-sticky h-full border-r border-rail-border shrink-0',
                     isDesktopSidebarCollapsed ? 'w-20' : 'w-64',
                 )}
             >
                 <SidebarContent location={location} isDesktopSidebarCollapsed={isDesktopSidebarCollapsed} setIsSidebarOpen={setIsSidebarOpen} />
             </aside>
 
-            {/* Sidebar - Mobile Overlay & Menu */}
-            <div className={clsx('fixed inset-0 z-50 md:hidden transition-all duration-500 ease-in-out', isSidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none delay-150')}>
-                {/* Backdrop */}
-                <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-500" onClick={() => setIsSidebarOpen(false)} />
-
-                {/* Mobile Menu Panel */}
+            {/* N3 Side-rail — mobile sheet */}
+            <div className={clsx('fixed inset-0 z-modal md:hidden', !isSidebarOpen && 'pointer-events-none')}>
+                <div
+                    className={clsx('absolute inset-0 bg-black/55 backdrop-blur-sm transition-opacity duration-300 ease-out', isSidebarOpen ? 'opacity-100' : 'opacity-0')}
+                    onClick={() => setIsSidebarOpen(false)}
+                    aria-hidden
+                />
                 <aside
                     className={clsx(
-                        'absolute top-0 left-0 w-64 h-full bg-gray-900 shadow-2xl transform transition-transform duration-500 ease-in-out flex flex-col',
+                        'absolute top-0 left-0 w-64 h-full bg-rail shadow-2xl flex flex-col transition-transform duration-300 ease-out',
                         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
                     )}
+                    aria-hidden={!isSidebarOpen}
+                    // Keeps the closed sheet out of the tab order without removing it
+                    // from the DOM — no focus leak behind the backdrop.
+                    inert={!isSidebarOpen}
                 >
                     <SidebarContent location={location} isDesktopSidebarCollapsed={false} setIsSidebarOpen={setIsSidebarOpen} />
                 </aside>
@@ -120,25 +133,28 @@ const AppLayout: React.FC = () => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <header className="bg-white dark:bg-gray-800 shadow-sm z-10 h-12 md:h-12 flex items-center justify-between px-4 md:px-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 transition-colors duration-300">
-                    <div className="flex items-center">
-                        <button
-                            onClick={toggleSidebar}
-                            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-0 mr-2 md:mr-4 text-gray-600 dark:text-gray-300 md:hidden"
-                        >
-                            <Menu size={20} />
-                        </button>
-                        <button
-                            onClick={toggleDesktopSidebar}
-                            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-0 mr-4 text-gray-600 dark:text-gray-300 hidden md:block"
-                        >
-                            <Menu size={24} />
-                        </button>
-                        <h1 className="text-base md:text-xl font-semibold text-gray-800 dark:!text-white truncate">{NAV_ITEMS.find((item) => item.path === location.pathname)?.name || 'Dashboard'}</h1>
-                    </div>
+                <header className="bg-surface z-sticky h-14 flex items-center gap-1 px-2 md:px-4 border-b border-border sticky top-0 shrink-0">
+                    <button
+                        onClick={toggleSidebar}
+                        aria-label="開啟選單"
+                        aria-expanded={isSidebarOpen}
+                        className="md:hidden grid place-items-center w-11 h-11 rounded-lg text-ink-muted cursor-pointer t-press [@media(hover:hover)]:hover:bg-surface-3 [@media(hover:hover)]:hover:text-ink"
+                    >
+                        <Menu size={22} />
+                    </button>
+                    <button
+                        onClick={toggleDesktopSidebar}
+                        aria-label={isDesktopSidebarCollapsed ? '展開側欄' : '收合側欄'}
+                        aria-expanded={!isDesktopSidebarCollapsed}
+                        className="hidden md:grid place-items-center w-11 h-11 rounded-lg text-ink-muted cursor-pointer t-press [@media(hover:hover)]:hover:bg-surface-3 [@media(hover:hover)]:hover:text-ink"
+                    >
+                        {isDesktopSidebarCollapsed ? <PanelLeftOpen size={22} /> : <PanelLeftClose size={22} />}
+                    </button>
+                    {/* One h1 per page, and it lives here. Pages start at h2. */}
+                    <h1 className="ml-1 md:ml-2 text-lg md:text-xl font-extrabold text-ink truncate">{pageTitle}</h1>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+                <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
                     <div className="max-w-7xl mx-auto flex flex-col min-h-full">
                         <div className="flex-1">
                             <Outlet />

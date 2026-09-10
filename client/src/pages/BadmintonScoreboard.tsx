@@ -356,21 +356,21 @@ const BadmintonScoreboard: React.FC = () => {
       {/* 頂部控制欄 */}
       <Card className="w-full flex justify-between items-center px-3 py-1 md:py-3 rounded-xl!">
         <div className="flex space-x-2 items-center">
-          <Button variant="soft" size="sm" onClick={toggleMode} className="text-[10px] md:text-sm gap-1">
+          <Button variant="soft" size="sm" onClick={toggleMode} className="text-2xs md:text-sm gap-1">
             {isDoubles ? <Users size={14} /> : <User size={14} />}
             <span>{isDoubles ? "雙打" : "單打"}</span>
           </Button>
 
           <div className="flex items-center space-x-1.5 ml-2 md:ml-4 bg-surface-3 px-1.5 py-0.5 rounded-md">
-            <span className="text-[10px] md:text-sm font-bold text-ink-muted">
+            <span className="text-2xs md:text-sm font-bold text-ink-muted">
               局數
             </span>
             <div className="flex items-center space-x-1">
-              <span className="text-red-600 dark:text-red-500 font-black text-xs md:text-lg">
+              <span className="text-team-a dark:text-team-a font-black text-xs md:text-lg">
                 {setsRed}
               </span>
-              <span className="text-ink-subtle text-[10px]">-</span>
-              <span className="text-blue-600 dark:text-blue-500 font-black text-xs md:text-lg">
+              <span className="text-ink-subtle text-2xs">-</span>
+              <span className="text-team-b dark:text-team-b font-black text-xs md:text-lg">
                 {setsBlue}
               </span>
             </div>
@@ -405,22 +405,22 @@ const BadmintonScoreboard: React.FC = () => {
         {/* 紅方 */}
         <div
           className={clsx(
-            "relative flex flex-col items-center justify-center p-1 md:p-4 rounded-lg md:rounded-3xl shadow-sm md:shadow-xl transition-all duration-300 border md:border-4 h-full",
+            "relative flex flex-col items-center justify-center p-1 md:p-4 rounded-lg md:rounded-3xl shadow-sm md:shadow-xl t-surface border md:border-4 h-full",
             servingTeam === "Red"
-              ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+              ? "border-team-a bg-team-a-soft"
               : "border-transparent bg-surface"
           )}
         >
           {servingTeam === "Red" && (
             <div className="absolute top-0.5 right-0.5 md:top-4 md:right-4 animate-bounce">
-              <span className="bg-red-500 dark:bg-red-600 text-white px-1 py-0.5 rounded-full text-[6px] md:text-xs font-bold shadow-sm">
+              <span className="bg-team-a text-team-ink px-1 py-0.5 rounded-full text-2xs md:text-xs font-bold shadow-sm">
                 發球
               </span>
             </div>
           )}
           <div className="flex items-center space-x-1 mb-0.5 md:mb-2 text-center">
-            <ShuttlecockIcon size={12} className="text-red-500 md:w-5 md:h-5" />
-            <h2 className="text-[9px] md:text-xl font-bold text-red-600 dark:text-red-400">
+            <ShuttlecockIcon size={12} className="text-team-a md:w-5 md:h-5" />
+            <h2 className="text-2xs md:text-xl font-bold text-team-a">
               紅方 (A)
             </h2>
             {setsRed > 0 && (
@@ -428,7 +428,7 @@ const BadmintonScoreboard: React.FC = () => {
                 {[...Array(setsRed)].map((_, i) => (
                   <Trophy
                     key={i}
-                    className="w-2.5 h-2.5 md:w-5 md:h-5 text-yellow-500 dark:text-white fill-current"
+                    className="w-2.5 h-2.5 md:w-5 md:h-5 text-warn fill-current"
                   />
                 ))}
               </div>
@@ -445,34 +445,34 @@ const BadmintonScoreboard: React.FC = () => {
             <div
               onClick={() => isDoubles && startEditing("Red", "left")}
               className={clsx(
-                "p-0.5 md:p-2 rounded border transition-all duration-300",
-                isDoubles ? "cursor-pointer hover:border-red-300" : "",
+                "p-0.5 md:p-2 rounded border t-surface",
+                isDoubles ? "cursor-pointer hover:border-team-a/50" : "",
                 isDoubles &&
                   currentServer === positions.Red.left &&
                   servingTeam === "Red"
-                  ? "bg-red-500 dark:bg-red-600 text-white border-red-500 dark:border-red-600 shadow-sm"
+                  ? "bg-team-a text-team-ink border-team-a dark:border-team-a shadow-sm"
                   : "bg-surface-3 border-transparent text-ink"
               )}
             >
-              <div className="text-[6px] md:text-xs opacity-70">左</div>
-              <div className="text-[8px] md:text-base font-bold truncate">
+              <div className="text-2xs md:text-xs opacity-70">左</div>
+              <div className="text-2xs md:text-base font-bold truncate">
                 {isDoubles ? positions.Red.left : "A"}
               </div>
             </div>
             <div
               onClick={() => isDoubles && startEditing("Red", "right")}
               className={clsx(
-                "p-0.5 md:p-2 rounded border transition-all duration-300",
-                isDoubles ? "cursor-pointer hover:border-red-300" : "",
+                "p-0.5 md:p-2 rounded border t-surface",
+                isDoubles ? "cursor-pointer hover:border-team-a/50" : "",
                 isDoubles &&
                   currentServer === positions.Red.right &&
                   servingTeam === "Red"
-                  ? "bg-red-500 dark:bg-red-600 text-white border-red-500 dark:border-red-600 shadow-sm"
+                  ? "bg-team-a text-team-ink border-team-a dark:border-team-a shadow-sm"
                   : "bg-surface-3 border-transparent text-ink"
               )}
             >
-              <div className="text-[6px] md:text-xs opacity-70">右</div>
-              <div className="text-[8px] md:text-base font-bold truncate">
+              <div className="text-2xs md:text-xs opacity-70">右</div>
+              <div className="text-2xs md:text-base font-bold truncate">
                 {isDoubles ? positions.Red.right : "A"}
               </div>
             </div>
@@ -482,15 +482,15 @@ const BadmintonScoreboard: React.FC = () => {
         {/* 藍方 */}
         <div
           className={clsx(
-            "relative flex flex-col items-center justify-center p-1 md:p-4 rounded-lg md:rounded-3xl shadow-sm md:shadow-xl transition-all duration-300 border md:border-4 h-full",
+            "relative flex flex-col items-center justify-center p-1 md:p-4 rounded-lg md:rounded-3xl shadow-sm md:shadow-xl t-surface border md:border-4 h-full",
             servingTeam === "Blue"
-              ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+              ? "border-team-b bg-team-b-soft"
               : "border-transparent bg-surface"
           )}
         >
           {servingTeam === "Blue" && (
             <div className="absolute top-0.5 right-0.5 md:top-4 md:right-4 animate-bounce">
-              <span className="bg-blue-500 dark:bg-blue-600 text-white px-1 py-0.5 rounded-full text-[6px] md:text-xs font-bold shadow-sm">
+              <span className="bg-team-b text-team-ink px-1 py-0.5 rounded-full text-2xs md:text-xs font-bold shadow-sm">
                 發球
               </span>
             </div>
@@ -498,9 +498,9 @@ const BadmintonScoreboard: React.FC = () => {
           <div className="flex items-center space-x-1 mb-0.5 md:mb-2 text-center">
             <ShuttlecockIcon
               size={12}
-              className="text-blue-500 md:w-5 md:h-5"
+              className="text-team-b md:w-5 md:h-5"
             />
-            <h2 className="text-[9px] md:text-xl font-bold text-blue-600 dark:text-blue-400">
+            <h2 className="text-2xs md:text-xl font-bold text-team-b">
               藍方 (B)
             </h2>
             {setsBlue > 0 && (
@@ -508,7 +508,7 @@ const BadmintonScoreboard: React.FC = () => {
                 {[...Array(setsBlue)].map((_, i) => (
                   <Trophy
                     key={i}
-                    className="w-2.5 h-2.5 md:w-5 md:h-5 text-yellow-500 dark:text-white fill-current"
+                    className="w-2.5 h-2.5 md:w-5 md:h-5 text-warn fill-current"
                   />
                 ))}
               </div>
@@ -524,34 +524,34 @@ const BadmintonScoreboard: React.FC = () => {
             <div
               onClick={() => isDoubles && startEditing("Blue", "left")}
               className={clsx(
-                "p-0.5 md:p-2 rounded border transition-all duration-300",
-                isDoubles ? "cursor-pointer hover:border-blue-300" : "",
+                "p-0.5 md:p-2 rounded border t-surface",
+                isDoubles ? "cursor-pointer hover:border-team-b/50" : "",
                 isDoubles &&
                   currentServer === positions.Blue.left &&
                   servingTeam === "Blue"
-                  ? "bg-blue-500 dark:bg-blue-600 text-white border-blue-500 dark:border-blue-600 shadow-sm"
+                  ? "bg-team-b text-team-ink border-team-b dark:border-team-b shadow-sm"
                   : "bg-surface-3 border-transparent text-ink"
               )}
             >
-              <div className="text-[6px] md:text-xs opacity-70">左</div>
-              <div className="text-[8px] md:text-base font-bold truncate">
+              <div className="text-2xs md:text-xs opacity-70">左</div>
+              <div className="text-2xs md:text-base font-bold truncate">
                 {isDoubles ? positions.Blue.left : "B"}
               </div>
             </div>
             <div
               onClick={() => isDoubles && startEditing("Blue", "right")}
               className={clsx(
-                "p-0.5 md:p-2 rounded border transition-all duration-300",
-                isDoubles ? "cursor-pointer hover:border-blue-300" : "",
+                "p-0.5 md:p-2 rounded border t-surface",
+                isDoubles ? "cursor-pointer hover:border-team-b/50" : "",
                 isDoubles &&
                   currentServer === positions.Blue.right &&
                   servingTeam === "Blue"
-                  ? "bg-blue-500 dark:bg-blue-600 text-white border-blue-500 dark:border-blue-600 shadow-sm"
+                  ? "bg-team-b text-team-ink border-team-b dark:border-team-b shadow-sm"
                   : "bg-surface-3 border-transparent text-ink"
               )}
             >
-              <div className="text-[6px] md:text-xs opacity-70">右</div>
-              <div className="text-[8px] md:text-base font-bold truncate">
+              <div className="text-2xs md:text-xs opacity-70">右</div>
+              <div className="text-2xs md:text-base font-bold truncate">
                 {isDoubles ? positions.Blue.right : "B"}
               </div>
             </div>
@@ -561,9 +561,9 @@ const BadmintonScoreboard: React.FC = () => {
 
       {/* 狀態提示 */}
       <Notice icon={Info} tone="info" className="w-full py-1.5 md:py-2.5">
-        <p className="font-bold text-[9px] md:text-sm">
+        <p className="font-bold text-2xs md:text-sm">
           發球：
-          <span className="text-blue-600 dark:text-blue-400">
+          <span className="text-team-b">
             {currentServer}
           </span>
           <span className="mx-1">
@@ -573,7 +573,7 @@ const BadmintonScoreboard: React.FC = () => {
           <button
             onClick={undo}
             disabled={history.length === 0}
-            className="ml-2 md:ml-4 text-ink-subtle hover:text-primary disabled:opacity-30 transition-colors underline font-bold"
+            className="relative ml-2 md:ml-4 inline-flex items-center text-ink-subtle disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer t-press hit-44 underline font-bold [@media(hover:hover)]:hover:text-primary"
           >
             上一步
           </button>
@@ -582,7 +582,7 @@ const BadmintonScoreboard: React.FC = () => {
 
       {/* 編輯球員名稱彈窗 */}
       {editingPlayer && (
-        <Modal onClose={() => setEditingPlayer(null)} maxWidth="max-w-sm" zIndex={70}>
+        <Modal onClose={() => setEditingPlayer(null)} maxWidth="max-w-sm">
           <h3 className="text-xl font-bold mb-4 text-ink">編輯球員名稱</h3>
           <div className="space-y-4">
             <TextField
@@ -609,7 +609,7 @@ const BadmintonScoreboard: React.FC = () => {
 
       {/* 規則彈窗 */}
       {showRules && (
-        <Modal onClose={() => setShowRules(false)} maxWidth="max-w-2xl" zIndex={60} className="max-h-[90vh] overflow-y-auto p-4 md:p-8">
+        <Modal onClose={() => setShowRules(false)} maxWidth="max-w-2xl" className="overflow-y-auto p-4 md:p-8">
           <div className="flex justify-between items-center mb-4 md:mb-6 border-b border-border pb-3 md:pb-4">
             <h3 className="text-lg md:text-2xl font-bold text-ink flex items-center">
               <Info className="mr-2 text-primary" /> 羽球規則快速查閱
@@ -647,21 +647,21 @@ const BadmintonScoreboard: React.FC = () => {
                 </p>
                 <ul className="list-none space-y-2 text-xs md:text-sm">
                   <li className="flex items-center">
-                    <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded text-center font-bold mr-3 border border-green-200 dark:border-green-800">
+                    <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-success-soft text-success rounded text-center font-bold mr-3 border border-success/30">
                       偶數
                     </span>
                     站在{" "}
-                    <strong className="text-green-600 dark:text-green-400 mx-1">
+                    <strong className="text-success mx-1">
                       右發球區
                     </strong>{" "}
                     發球
                   </li>
                   <li className="flex items-center">
-                    <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded text-center font-bold mr-3 border border-orange-200 dark:border-orange-800">
+                    <span className="w-12 md:w-16 px-1 md:px-2 py-1 bg-warn-soft text-warn rounded text-center font-bold mr-3 border border-warn/30">
                       奇數
                     </span>
                     站在{" "}
-                    <strong className="text-orange-600 dark:text-orange-400 mx-1">
+                    <strong className="text-warn dark:text-warn mx-1">
                       左發球區
                     </strong>{" "}
                     發球
@@ -715,7 +715,7 @@ const BadmintonScoreboard: React.FC = () => {
             </section>
 
             <Notice icon={Info} tone="info">
-              <p className="font-bold mb-1">💡 快速記憶口訣：</p>
+              <p className="font-bold mb-1">快速記憶口訣</p>
               <p className="italic">
                 「看分數、分奇偶、右偶左奇」、「單打走內、雙打走外」、「雙打一隊一次發球權」
               </p>

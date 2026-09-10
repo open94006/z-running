@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAlert } from '../components/AlertContext';
-import { Search, MapPin, Wind, Droplets, Cloud, Activity, ThermometerSun, CloudRain, Gauge, Heart, Settings, Sun } from 'lucide-react';
+import { Search, MapPin, Wind, Droplets, Cloud, Activity, ThermometerSun, CloudRain, Gauge, Heart, Settings, Sun, Clock, Check, Footprints, Sunrise, Sunset, Star } from 'lucide-react';
 import { applyPaceToAdjustment, formatPace, getPaceAdjustment, getRunningCondition, PM25_BREAKPOINTS, pickBestSlotIndex, type RunnerTolerance } from '../lib/runningCondition';
 import { getSunTimes } from '../lib/sunTimes';
 import { getClothingAdvice, getCompassDirection, getHydrationAdvice } from '../lib/runnerAdvice';
@@ -410,17 +410,17 @@ function WeatherChecker() {
     const getAqiColor = (aqi: number) => {
         switch (aqi) {
             case 1:
-                return 'bg-green-600 text-white';
+                return 'bg-aqi-1 text-aqi-ink';
             case 2:
-                return 'bg-yellow-600 text-white';
+                return 'bg-aqi-2 text-aqi-ink';
             case 3:
-                return 'bg-orange-600 text-white';
+                return 'bg-aqi-3 text-aqi-ink';
             case 4:
-                return 'bg-red-600 text-white';
+                return 'bg-aqi-4 text-aqi-ink';
             case 5:
-                return 'bg-purple-700 text-white';
+                return 'bg-aqi-5 text-aqi-ink';
             default:
-                return 'bg-gray-500 text-white';
+                return 'bg-aqi-0 text-aqi-ink';
         }
     };
 
@@ -621,28 +621,33 @@ function WeatherChecker() {
         <div className="w-full max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 flex flex-col h-full overflow-hidden">
             {/* 頂部跑者標題 */}
             <div className="flex items-center gap-2 mb-3 lg:mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-info flex items-center justify-center shadow-lg">
-                    <span className="text-2xl">🏃</span>
+                <div className="w-10 h-10 rounded-lg bg-primary text-primary-ink grid place-items-center shrink-0">
+                    <Footprints size={22} aria-hidden />
                 </div>
-                <div>
-                    <h1 className="text-xl lg:text-2xl font-black text-ink tracking-tight">跑者天氣站</h1>
-                    <p className="text-xs lg:text-sm text-ink-muted">Runner&apos;s Weather Hub</p>
+                <div className="min-w-0">
+                    <h2 className="text-xl lg:text-2xl font-extrabold text-ink tracking-tight">跑者天氣站</h2>
+                    <p className="text-xs lg:text-sm text-ink-muted">Runner&#8217;s Weather Hub</p>
                 </div>
             </div>
 
             {/* 搜尋列 */}
-            <form onSubmit={handleSearchSubmit} className="relative mb-4 lg:mb-5 flex gap-2 z-0 lg:z-50 max-w-3xl">
+            <form onSubmit={handleSearchSubmit} className="relative mb-4 lg:mb-5 flex gap-2 z-dropdown max-w-3xl">
                 <Button type="button" variant="primary" iconOnly onClick={handleGetCurrentLocation} title="定位" aria-label="定位">
                     <MapPin size={24} />
                 </Button>
                 <TextField
                     value={city}
                     onChange={handleInputChange}
-                    placeholder="搜尋城市/鄉鎮（例如：西屯）"
+                    placeholder="例如：西屯"
                     disabled={loading}
                     containerClassName="flex-1"
                     trailing={
-                        <button type="submit" disabled={loading} className="text-ink-subtle hover:text-primary p-1 transition-colors shrink-0">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            aria-label="搜尋"
+                            className="grid place-items-center w-8 h-8 shrink-0 rounded-md text-ink-subtle cursor-pointer t-press hit-44 disabled:opacity-45 disabled:cursor-not-allowed [@media(hover:hover)]:hover:text-primary"
+                        >
                             <Search size={20} />
                         </button>
                     }
@@ -663,7 +668,7 @@ function WeatherChecker() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPaceModal(true)}
-                                    className="flex items-baseline gap-1.5 px-4 py-2 bg-surface border border-border rounded-xl shadow-sm hover:border-primary/50 active:scale-95 transition-all"
+                                    className="flex items-baseline gap-1.5 px-4 py-2 bg-surface border border-border rounded-xl shadow-sm hover:border-primary/50 active:scale-95 t-press"
                                 >
                                     <span className="text-2xl font-black tabular-nums text-ink">{targetPaceMinutesInput}</span>
                                     <span className="text-xs font-semibold text-ink-muted">分</span>
@@ -705,7 +710,7 @@ function WeatherChecker() {
             {favorites.length > 0 && (
                 <div className="mb-4 max-w-4xl">
                     <div className="flex items-center gap-2 mb-2 px-1">
-                        <Heart size={14} className="text-rose-600 dark:text-white dark:fill-white/10 dark:drop-shadow-[0_0_1px_rgba(255,255,255,0.6)]" />
+                        <Heart size={14} className="text-danger fill-danger/25" />
                         <p className="text-xs font-semibold tracking-wide text-ink-muted">最愛地點</p>
                     </div>
                     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -743,119 +748,133 @@ function WeatherChecker() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
                             {/* Q1: 現在適合跑嗎（佔兩欄） */}
                             {runningCondition && (
-                                <div
-                                    className={`md:col-span-2 min-w-0 bg-linear-to-r ${runningCondition.color} rounded-3xl p-5 lg:p-6 text-white relative overflow-hidden`}
-                                    style={{ filter: `brightness(${runningCondition.brightness})` }}
-                                >
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-8 -mt-8" />
-                                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/5 rounded-full blur-2xl -ml-6 -mb-6" />
-
-                                    <div className="relative z-10">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div>
-                                                <div className="flex items-center gap-1.5 text-white/95 drop-shadow-sm">
-                                                    <MapPin size={18} className="drop-shadow-sm" />
-                                                    <h2 className="text-xl lg:text-2xl font-black leading-tight tracking-tight [text-shadow:0_2px_6px_rgba(0,0,0,0.45)]">
-                                                        {locationDisplay.title || weather.location}
-                                                    </h2>
-                                                    <button
-                                                        type="button"
-                                                        onClick={toggleCurrentFavorite}
-                                                        className="ml-1 p-1.5 rounded-full bg-white/15 hover:bg-white/25 active:scale-95 transition-all"
-                                                        title={isCurrentFavorite ? '從最愛移除' : '加入最愛'}
-                                                        aria-label={isCurrentFavorite ? '從最愛移除' : '加入最愛'}
-                                                    >
-                                                        <Heart size={16} className={isCurrentFavorite ? 'text-rose-300 fill-rose-300' : 'text-white'} />
-                                                    </button>
-                                                </div>
-                                                {locationDisplay.subtitle && (
-                                                    <p className="text-xs font-medium text-white/90 ml-6 mt-0.5 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">{locationDisplay.subtitle}</p>
-                                                )}
+                                /* Readout family · Stat-Led: the score is the page's
+                                   one giant number, on a solid bleed-colour band.
+                                   Gone from the previous build: two blurred floating
+                                   orbs, three glass panels, and eight text-shadows
+                                   propping up white text on a surface too light to
+                                   carry it. The band token is dark enough unaided. */
+                                <section aria-label="跑步狀態與評分" className={`md:col-span-2 min-w-0 ${runningCondition.color} text-score-ink rounded-3xl p-5 lg:p-6`}>
+                                    <div className="flex justify-between items-start gap-3 flex-wrap">
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-1.5">
+                                                <MapPin size={18} aria-hidden className="shrink-0" />
+                                                <h2 className="text-xl lg:text-2xl font-extrabold leading-tight tracking-tight">{locationDisplay.title || weather.location}</h2>
+                                                <button
+                                                    type="button"
+                                                    onClick={toggleCurrentFavorite}
+                                                    className="ml-1 grid place-items-center w-9 h-9 shrink-0 rounded-pill bg-score-ink/15 cursor-pointer t-press [@media(hover:hover)]:hover:bg-score-ink/25 [@media(hover:hover)]:active:translate-y-px"
+                                                    title={isCurrentFavorite ? '從最愛移除' : '加入最愛'}
+                                                    aria-label={isCurrentFavorite ? '從最愛移除' : '加入最愛'}
+                                                    aria-pressed={isCurrentFavorite}
+                                                >
+                                                    <Heart size={16} className={isCurrentFavorite ? 'fill-current' : ''} />
+                                                </button>
                                             </div>
-                                            <p className="text-[12px] font-bold text-white/90 bg-white/20 px-2 py-1 rounded-lg backdrop-blur-sm shadow-sm inline-flex items-center gap-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
-                                                🕐 {formatTime(weather.timestamp)}
+                                            {locationDisplay.subtitle && <p className="text-xs font-medium opacity-90 ml-6 mt-0.5">{locationDisplay.subtitle}</p>}
+                                        </div>
+                                        <p className="inline-flex items-center gap-1.5 text-xs font-bold rounded-lg bg-score-ink/15 px-2.5 py-1.5">
+                                            <Clock size={13} aria-hidden />
+                                            {formatTime(weather.timestamp)}
+                                        </p>
+                                    </div>
+
+                                    {/* The one --text-readout numeral this family allows.
+                                        items-baseline, not items-end: the two are different
+                                        sizes, so aligning boxes leaves the digits floating —
+                                        only a shared baseline reads as bottom-aligned.
+                                        leading stays >= 1: CJK glyphs fill the full em box and
+                                        anything tighter bleeds up into the location title. */}
+                                    <div className="mt-8 mb-7 lg:mt-9 lg:mb-8 flex flex-wrap items-baseline gap-x-5 gap-y-1">
+                                        <p className="font-display text-readout font-black leading-[1.02] tracking-tight">{runningCondition.text}</p>
+                                        <p className="flex items-baseline gap-1">
+                                            {/* One step below the readout at every width, so the
+                                                hierarchy survives the clamp floor on mobile. */}
+                                            <span className="font-display text-4xl sm:text-5xl font-black leading-none tabular-nums">{runningCondition.score}</span>
+                                            <span className="text-sm font-bold opacity-80">/100</span>
+                                        </p>
+                                    </div>
+
+                                    {/* Within-band gradation — the signal the brightness
+                                        filter used to carry, moved off the text surface. */}
+                                    <div
+                                        className="mt-3 h-1.5 rounded-pill bg-score-ink/20 overflow-hidden"
+                                        role="img"
+                                        aria-label={`綜合分數 ${runningCondition.score} 分，滿分 100 分`}
+                                    >
+                                        <div className="h-full rounded-pill bg-score-ink/85" style={{ width: `${runningCondition.score}%` }} />
+                                    </div>
+
+                                    <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
+                                        {[
+                                            { label: '溫度佳', penalty: runningCondition.penalties.temperature },
+                                            { label: 'PM2.5 佳', penalty: runningCondition.penalties.airQuality },
+                                            { label: '濕度佳', penalty: runningCondition.penalties.humidity },
+                                            { label: '露點佳', penalty: runningCondition.penalties.dewPoint },
+                                            { label: '風速佳', penalty: runningCondition.penalties.wind },
+                                        ]
+                                            .filter((item) => item.penalty === 0)
+                                            .map((item) => (
+                                                <span key={item.label} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-pill bg-score-ink/15">
+                                                    <Check size={12} aria-hidden />
+                                                    {item.label}
+                                                </span>
+                                            ))}
+                                    </div>
+
+                                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        <div className="rounded-xl bg-score-ink/12 px-3 py-2.5">
+                                            <p className="text-xs font-semibold opacity-85">當前氣溫</p>
+                                            <p className="font-display text-3xl font-black leading-none tabular-nums mt-1">{weather.temperature}°C</p>
+                                            <p className="text-xs opacity-80 mt-1">
+                                                體感 {weather.feelsLike}°C・露點 {runningCondition.dewPoint}°C
                                             </p>
                                         </div>
-
-                                        <div className="mt-5 mb-2 lg:mt-6 lg:mb-3">
-                                            <p className="text-xs font-bold opacity-80 uppercase tracking-widest mb-2 ml-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">跑步狀態與評分</p>
-                                            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                                                <p className="text-5xl sm:text-6xl font-black tracking-tighter [text-shadow:0_2px_8px_rgba(0,0,0,0.5)] leading-none">{runningCondition.text}</p>
-                                                <div className="inline-flex items-end gap-1.5 px-3 py-2 rounded-2xl bg-white/20 border border-white/25 backdrop-blur-sm shadow-lg self-start sm:self-auto">
-                                                    <span className="text-[12px] font-bold text-white/90 mb-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">綜合分數</span>
-                                                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.5)]">
-                                                        {runningCondition.score}
-                                                    </span>
-                                                    <span className="text-sm font-bold text-white/90 mb-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">/100</span>
-                                                </div>
-                                            </div>
-                                            <div className="mt-3 flex flex-wrap gap-2 text-[12px] font-semibold text-white/95">
-                                                {[
-                                                    { label: '溫度佳', penalty: runningCondition.penalties.temperature },
-                                                    { label: 'PM2.5 佳', penalty: runningCondition.penalties.airQuality },
-                                                    { label: '濕度佳', penalty: runningCondition.penalties.humidity },
-                                                    { label: '露點佳', penalty: runningCondition.penalties.dewPoint },
-                                                    { label: '風速佳', penalty: runningCondition.penalties.wind },
-                                                ]
-                                                    .filter((item) => item.penalty === 0)
-                                                    .map((item) => (
-                                                        <span
-                                                            key={item.label}
-                                                            className="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-white/90 shadow-sm backdrop-blur-sm [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]"
-                                                        >
-                                                            ✓ {item.label}
+                                        <div className="rounded-xl bg-score-ink/12 px-3 py-2.5 sm:col-span-2">
+                                            <p className="inline-flex items-center gap-1.5 text-xs font-semibold opacity-85">
+                                                <Footprints size={13} aria-hidden />
+                                                配速建議
+                                            </p>
+                                            {concretePace ? (
+                                                <>
+                                                    <p className="font-black leading-tight mt-1">
+                                                        <span className="text-xs font-semibold opacity-75 tabular-nums">{formatPace(runnerProfile.targetPaceSecPerKm!)}/km</span>
+                                                        <span className="mx-1.5 opacity-65">→</span>
+                                                        <span className="text-base tabular-nums">
+                                                            {formatPace(concretePace.minSecPerKm)}~{formatPace(concretePace.maxSecPerKm)}/km
                                                         </span>
-                                                    ))}
-                                            </div>
-                                            <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                                <div className="rounded-xl border border-white/18 bg-white/10 px-3 py-2">
-                                                    <p className="text-[12px] font-semibold text-white/85 [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]">當前氣溫</p>
-                                                    <p className="text-2xl font-black leading-tight text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.45)]">{weather.temperature}°C</p>
-                                                    <p className="text-[12px] text-white/80 mt-0.5 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
-                                                        體感 {weather.feelsLike}°C・露點 {runningCondition.dewPoint}°C
                                                     </p>
-                                                </div>
-                                                <div className="rounded-xl border border-white/18 bg-white/10 px-3 py-2 sm:col-span-2">
-                                                    <p className="text-[12px] font-semibold text-white/85 [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]">🏃 配速建議</p>
-                                                    {concretePace ? (
-                                                        <>
-                                                            <p className="text-sm font-black leading-tight mt-1 [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
-                                                                <span className="text-white/75 text-[12px] font-semibold">{formatPace(runnerProfile.targetPaceSecPerKm!)}/km</span>
-                                                                <span className="mx-1.5 text-white/65">→</span>
-                                                                <span className="text-white text-base">
-                                                                    {formatPace(concretePace.minSecPerKm)}~{formatPace(concretePace.maxSecPerKm)}/km
-                                                                </span>
-                                                            </p>
-                                                            {paceAdjustment && <p className="text-[12px] text-white/80 mt-0.5 leading-snug">{paceAdjustment.message}</p>}
-                                                        </>
-                                                    ) : paceAdjustment ? (
-                                                        <p className="text-xs font-semibold text-white/95 mt-1 leading-snug">{paceAdjustment.message}</p>
-                                                    ) : (
-                                                        <p className="text-[12px] text-white/75 mt-1">於設定區輸入目標配速，即可取得當日建議</p>
-                                                    )}
-                                                    {sunTimes && (
-                                                        <p className="text-[12px] text-white/80 mt-1.5 leading-snug">
-                                                            🌅 日出 {formatClockTime(sunTimes.sunrise)}・🌇 日落 {formatClockTime(sunTimes.sunset)}
-                                                            {suggestEveningRun && <span className="font-semibold">・建議日落後再跑，體感較涼爽</span>}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            {weather.source && <p className="text-[12px] text-white/70 text-right mt-2 font-medium">資料來源：{weather.source}</p>}
+                                                    {paceAdjustment && <p className="text-xs opacity-85 mt-0.5 leading-snug">{paceAdjustment.message}</p>}
+                                                </>
+                                            ) : paceAdjustment ? (
+                                                <p className="text-xs font-semibold mt-1 leading-snug">{paceAdjustment.message}</p>
+                                            ) : (
+                                                <p className="text-xs opacity-80 mt-1">於設定區輸入目標配速，即可取得當日建議</p>
+                                            )}
+                                            {sunTimes && (
+                                                <p className="inline-flex flex-wrap items-center gap-1.5 text-xs opacity-85 mt-1.5 leading-snug">
+                                                    <Sunrise size={13} aria-hidden />
+                                                    日出 {formatClockTime(sunTimes.sunrise)}
+                                                    <Sunset size={13} aria-hidden className="ml-1" />
+                                                    日落 {formatClockTime(sunTimes.sunset)}
+                                                    {suggestEveningRun && <span className="font-semibold">・建議日落後再跑，體感較涼爽</span>}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
+                                    {weather.source && <p className="text-xs opacity-70 text-right mt-3 font-medium">資料來源：{weather.source}</p>}
+                                </section>
                             )}
 
                             {/* 第三欄第一格：即時數據磚（與評分卡同排，優先度僅次於它） */}
                             <div className="grid grid-cols-2 gap-3 content-start min-w-0">
-                                <Tile icon={Droplets} label="濕度" value={weather.humidity} unit="%" hint={weather.humidity > 70 ? '⚠️ 影響散熱' : '✓ 舒適'} accent="info" />
-                                <Tile icon={Wind} label="風速" value={weather.windSpeed} unit="km/h" hint={weather.windSpeed > 20 ? '⚠️ 強風' : '✓ 微風'} accent="success" />
+                                <Tile icon={Droplets} label="濕度" value={weather.humidity} unit="%" hint={weather.humidity > 70 ? '▲ 影響散熱' : '✓ 舒適'} accent="info" />
+                                <Tile icon={Wind} label="風速" value={weather.windSpeed} unit="km/h" hint={weather.windSpeed > 20 ? '▲ 強風' : '✓ 微風'} accent="success" />
                                 <Tile
                                     icon={Activity}
                                     label="PM2.5"
                                     value={weather.airQuality?.components.pm2_5.toFixed(1)}
-                                    hint={(weather.airQuality?.components.pm2_5 || 0) > PM25_BREAKPOINTS.sensitiveUnhealthy ? '⚠️ 不佳' : '✓ 良好'}
+                                    hint={(weather.airQuality?.components.pm2_5 || 0) > PM25_BREAKPOINTS.sensitiveUnhealthy ? '▲ 不佳' : '✓ 良好'}
                                     accent="accent"
                                 />
                                 <Tile
@@ -867,7 +886,7 @@ function WeatherChecker() {
                                         typeof weather.precipitationProbability !== 'number'
                                             ? '資料更新中'
                                             : weather.precipitationProbability >= 60
-                                              ? '⚠️ 建議備雨具'
+                                              ? '▲ 建議備雨具'
                                               : weather.precipitationProbability >= 30
                                                 ? '☁️ 可能有雨'
                                                 : '✓ 降雨機率低'
@@ -875,7 +894,7 @@ function WeatherChecker() {
                                     accent="warn"
                                 />
                                 {typeof weather.uvIndex === 'number' && (
-                                    <Tile icon={Sun} label="紫外線" value={weather.uvIndex} hint={weather.uvIndex >= 8 ? `⚠️ ${weather.uvLevel}` : `✓ ${weather.uvLevel}`} accent="danger" />
+                                    <Tile icon={Sun} label="紫外線" value={weather.uvIndex} hint={weather.uvIndex >= 8 ? `▲ ${weather.uvLevel}` : `✓ ${weather.uvLevel}`} accent="danger" />
                                 )}
                                 {clothingAdvice && <Tile icon={ThermometerSun} label="穿著建議" value={clothingAdvice.title} hint={clothingAdvice.description} accent="warn" />}
                             </div>
@@ -902,8 +921,8 @@ function WeatherChecker() {
                                                         key={minutes}
                                                         type="button"
                                                         onClick={() => setPlannedDurationMinutes(minutes)}
-                                                        className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition-colors ${
-                                                            plannedDurationMinutes === minutes ? 'bg-primary text-white' : 'bg-surface-3 text-ink-muted'
+                                                        className={`px-2 py-1 rounded-md text-2xs font-semibold cursor-pointer t-press hit-44 ${
+                                                            plannedDurationMinutes === minutes ? 'bg-primary text-primary-ink' : 'bg-surface-3 text-ink-muted'
                                                         }`}
                                                     >
                                                         {minutes}分
@@ -940,19 +959,19 @@ function WeatherChecker() {
                                         </div>
                                         <div className="grid grid-cols-2 gap-3 mt-4 border-t border-border pt-4">
                                             <div className="text-center bg-surface-3 p-2 rounded-lg border border-border">
-                                                <div className="text-[10px] text-ink-muted mb-1 font-semibold">PM2.5</div>
+                                                <div className="text-2xs text-ink-muted mb-1 font-semibold">PM2.5</div>
                                                 <div className="font-black text-base text-ink">{weather.airQuality.components.pm2_5.toFixed(1)}</div>
                                             </div>
                                             <div className="text-center bg-surface-3 p-2 rounded-lg border border-border">
-                                                <div className="text-[10px] text-ink-muted mb-1 font-semibold">PM10</div>
+                                                <div className="text-2xs text-ink-muted mb-1 font-semibold">PM10</div>
                                                 <div className="font-black text-base text-ink">{weather.airQuality.components.pm10.toFixed(1)}</div>
                                             </div>
                                             <div className="text-center bg-surface-3 p-2 rounded-lg border border-border">
-                                                <div className="text-[10px] text-ink-muted mb-1 font-semibold">NO2</div>
+                                                <div className="text-2xs text-ink-muted mb-1 font-semibold">NO2</div>
                                                 <div className="font-black text-base text-ink">{weather.airQuality.components.no2.toFixed(1)}</div>
                                             </div>
                                             <div className="text-center bg-surface-3 p-2 rounded-lg border border-border">
-                                                <div className="text-[10px] text-ink-muted mb-1 font-semibold">O3</div>
+                                                <div className="text-2xs text-ink-muted mb-1 font-semibold">O3</div>
                                                 <div className="font-black text-base text-ink">{weather.airQuality.components.o3.toFixed(1)}</div>
                                             </div>
                                         </div>
@@ -966,7 +985,7 @@ function WeatherChecker() {
                                     <Card>
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="text-sm font-black text-ink tracking-wide">未來 6 小時路跑合適分數</h3>
-                                            <span className="text-[10px] text-ink-muted">每 3 小時更新</span>
+                                            <span className="text-2xs text-ink-muted">每 3 小時更新</span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-2">
                                             {displayedTrend.map((point, index) => {
@@ -975,13 +994,13 @@ function WeatherChecker() {
                                                 return (
                                                     <div
                                                         key={`${point.time}-${index}`}
-                                                        className={`relative rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/20 border px-3 py-2 ${
-                                                            isBest ? 'border-2 border-success shadow-md' : 'border border-amber-200/70 dark:border-amber-700/50'
+                                                        className={`relative rounded-xl bg-surface-2 px-3 py-2 border ${
+                                                            isBest ? 'border-success ring-2 ring-success/35' : 'border-border'
                                                         }`}
                                                     >
                                                         {isBest && (
-                                                            <span className="absolute -top-2 -right-1.5 text-sm" title="建議時段">
-                                                                ⭐
+                                                            <span className="absolute -top-2 -right-1.5 grid place-items-center w-5 h-5 rounded-pill bg-success text-success-ink" title="建議時段">
+                                                                <Star size={11} aria-hidden className="fill-current" />
                                                             </span>
                                                         )}
                                                         <div className="flex items-center justify-between gap-2">
@@ -992,13 +1011,13 @@ function WeatherChecker() {
                                                         {condition && (
                                                             <div className="mt-2">
                                                                 <div className={`h-1.5 rounded-full bg-gradient-to-r ${condition.color}`} />
-                                                                <p className="text-[10px] text-ink-muted mt-1 font-semibold">
+                                                                <p className="text-2xs text-ink-muted mt-1 font-semibold">
                                                                     {condition.text} {condition.score}
                                                                 </p>
                                                             </div>
                                                         )}
                                                         {typeof point.precipitationProbability === 'number' && point.precipitationProbability >= 60 && (
-                                                            <p className="text-[10px] text-sky-700 dark:text-sky-300 mt-0.5">☔ 降雨 {point.precipitationProbability}%</p>
+                                                            <p className="text-2xs text-info dark:text-info mt-0.5">☔ 降雨 {point.precipitationProbability}%</p>
                                                         )}
                                                     </div>
                                                 );
@@ -1017,7 +1036,7 @@ function WeatherChecker() {
             </div>
 
             {showPaceModal && (
-                <Modal onClose={() => setShowPaceModal(false)} zIndex={120}>
+                <Modal onClose={() => setShowPaceModal(false)}>
                     <h3 className="text-base font-black text-ink mb-0.5">設定目標配速</h3>
 
                     {/* ── 手機：水平滾輪（觸控） ── */}
@@ -1083,7 +1102,7 @@ function WeatherChecker() {
             )}
 
             {showLocationModal && locationOptions.length > 1 && (
-                <Modal onClose={() => setShowLocationModal(false)} zIndex={110}>
+                <Modal onClose={() => setShowLocationModal(false)}>
                     <h3 className="text-lg font-bold text-ink mb-2">請選擇地點</h3>
                     <p className="text-sm text-ink-muted mb-3">找到多個符合結果，請選擇要查詢的鄉鎮市區。</p>
 
@@ -1101,10 +1120,10 @@ function WeatherChecker() {
                                     strokeLinecap="round"
                                     strokeDasharray="62.83"
                                     strokeDashoffset={62.83 * (1 - autoSelectRemaining / AUTO_SELECT_SECONDS)}
-                                    className="text-primary transition-all duration-200"
+                                    className="text-primary t-surface"
                                 />
                             </svg>
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-ink">{autoSelectRemaining}</span>
+                            <span className="absolute inset-0 flex items-center justify-center text-2xs font-bold text-ink">{autoSelectRemaining}</span>
                         </div>
                         <span>{autoSelectRemaining} 秒內未選擇，將自動套用第一個地點</span>
                     </div>

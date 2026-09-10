@@ -12,23 +12,25 @@ interface ChipProps {
 /** Removable, tinted pill — e.g. favorite locations. Not to be confused with Tag (fill-and-forget). */
 export function Chip({ label, icon: Icon, onSelect, onRemove, title }: ChipProps) {
     return (
-        <div className="inline-flex items-center gap-0.5 bg-primary-soft rounded-full pl-1 pr-1 py-1 transition-colors">
+        <div className="inline-flex items-center gap-0.5 bg-primary-soft rounded-pill p-1">
             <button
                 type="button"
                 onClick={onSelect}
                 title={title}
-                className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-primary rounded-full hover:bg-primary/15 transition-colors"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap px-2 py-1 text-xs font-semibold text-primary-on-soft rounded-pill cursor-pointer t-press hit-44 [@media(hover:hover)]:hover:bg-primary/15"
             >
                 {Icon && <Icon size={13} className="opacity-75" />}
                 {label}
             </button>
+            {/* Visual size stays small; the ::before expands the hit target to 44px
+                so it is reachable on touch without bloating the pill. */}
             <button
                 type="button"
                 onClick={onRemove}
                 aria-label={`移除 ${label}`}
-                className="w-[22px] h-[22px] shrink-0 grid place-items-center rounded-full text-primary/55 hover:bg-danger/15 hover:text-danger transition-colors"
+                className="relative w-6 h-6 shrink-0 grid place-items-center rounded-pill text-primary-on-soft/70 cursor-pointer t-press before:absolute before:-inset-2.5 before:content-[''] [@media(hover:hover)]:hover:bg-danger/15 [@media(hover:hover)]:hover:text-danger"
             >
-                <X size={11} />
+                <X size={12} />
             </button>
         </div>
     );

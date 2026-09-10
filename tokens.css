@@ -1,0 +1,118 @@
+/* Hallmark · genre: editorial · theme: Sport (roman) · design-system: design.md
+ * Portable token export for Z-Running. The live tokens are in
+ * client/src/index.css; this file is the copy you carry to the next project.
+ * Anchor hue 255–258. No zero-chroma neutrals, no #fff, no #000.
+ */
+
+:root {
+    /* ── brand / interactive ── */
+    --primary: oklch(52% 0.216 258);
+    --primary-hover: oklch(45% 0.2 258);
+    --primary-soft: oklch(94% 0.035 258);
+    --primary-ink: oklch(99% 0.004 255);
+    --focus: oklch(48% 0.22 258);
+
+    /* ── semantic · each fill ships its own -ink ── */
+    --success: oklch(55% 0.15 150);
+    --success-soft: oklch(95% 0.04 150);
+    --success-ink: oklch(99% 0.004 150);
+    --warn: oklch(62% 0.15 68);
+    --warn-soft: oklch(95.5% 0.045 80);
+    --warn-ink: oklch(18% 0.04 68);
+    --danger: oklch(53% 0.2 27);
+    --danger-soft: oklch(95% 0.03 27);
+    --danger-ink: oklch(99% 0.004 27);
+    --info: oklch(58% 0.12 225);
+    --info-soft: oklch(95% 0.03 225);
+    --info-ink: oklch(99% 0.004 225);
+    --accent-violet: oklch(55% 0.19 295);
+    --accent-soft: oklch(95% 0.035 295);
+    --accent-ink: oklch(99% 0.004 295);
+
+    /* ── surfaces + ink · tinted toward the anchor ── */
+    --app-bg: oklch(96.5% 0.007 255);
+    --surface: oklch(99.2% 0.003 255);
+    --surface-2: oklch(97.6% 0.005 255);
+    --surface-3: oklch(94.2% 0.009 255);
+    --border: oklch(89% 0.011 255);
+    --border-strong: oklch(81% 0.013 255);
+    --text: oklch(21% 0.022 255);
+    --text-muted: oklch(44% 0.018 255);
+    --text-subtle: oklch(57% 0.015 255);
+
+    /* ── type ── */
+    --font-cjk: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'Heiti TC', sans-serif;
+    --font-display: 'Big Shoulders Display', var(--font-cjk);
+    --font-body: 'IBM Plex Sans', var(--font-cjk);
+    --text-2xs: 0.625rem;
+    --text-display: clamp(2.25rem, 4vw + 1rem, 3.75rem);
+    --text-readout: clamp(3rem, 11vw, 6.5rem);
+
+    /* ── space · 4pt, 9 steps ── */
+    --space-3xs: 0.125rem;
+    --space-2xs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 4rem;
+    --space-3xl: 6rem;
+
+    /* ── radius ── */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-pill: 999px;
+
+    /* ── motion · Sport runs at 0.7× ── */
+    --dur-micro: 90ms;
+    --dur-short: 150ms;
+    --dur-long: 300ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+    /* ── z · six named levels ── */
+    --z-base: 1;
+    --z-raised: 10;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-modal: 400;
+    --z-toast: 500;
+}
+
+/* Same hue. Only lightness and chroma move. Elevation is lighter, not darker. */
+.dark {
+    --primary: oklch(70% 0.17 258);
+    --primary-hover: oklch(78% 0.15 258);
+    --primary-soft: oklch(30% 0.08 258);
+    --primary-ink: oklch(16% 0.02 258);
+    --focus: oklch(72% 0.17 258);
+
+    --success: oklch(72% 0.16 150);
+    --success-soft: oklch(28% 0.06 150);
+    --success-ink: oklch(15% 0.03 150);
+    --warn: oklch(78% 0.15 75);
+    --warn-soft: oklch(30% 0.06 68);
+    --warn-ink: oklch(16% 0.04 68);
+    --danger: oklch(68% 0.17 25);
+    --danger-soft: oklch(28% 0.07 25);
+    --danger-ink: oklch(15% 0.03 25);
+    --info: oklch(72% 0.13 225);
+    --info-soft: oklch(28% 0.06 225);
+    --info-ink: oklch(15% 0.03 225);
+    --accent-violet: oklch(72% 0.15 295);
+    --accent-soft: oklch(29% 0.07 295);
+    --accent-ink: oklch(15% 0.03 295);
+
+    --app-bg: oklch(15% 0.014 255);
+    --surface: oklch(19.5% 0.016 255);
+    --surface-2: oklch(16.8% 0.015 255);
+    --surface-3: oklch(24% 0.018 255);
+    --border: oklch(31% 0.017 255);
+    --border-strong: oklch(40% 0.017 255);
+    --text: oklch(95% 0.006 255);
+    --text-muted: oklch(77% 0.013 255);
+    --text-subtle: oklch(63% 0.015 255);
+}

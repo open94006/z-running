@@ -8,37 +8,31 @@ interface ThemeToggleProps {
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ showLabel = true }) => {
     const [isDark, setIsDark] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                return savedTheme === 'dark';
-            }
-            return document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        return false;
+        if (typeof window === 'undefined') return false;
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) return savedTheme === 'dark';
+        return document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
     });
 
     useEffect(() => {
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
+        document.documentElement.classList.toggle('dark', isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }, [isDark]);
 
     return (
-        <div className={clsx('flex items-center justify-start w-full', showLabel ? 'space-x-3' : 'space-x-0')}>
-            {/* {showLabel && <span className="text-xs font-medium text-gray-400 whitespace-nowrap transition-opacity duration-300">{isDark ? '暗黑模式' : '明亮模式'}</span>} */}
-            <button
-                onClick={() => setIsDark(!isDark)}
-                className={clsx('p-2 rounded-lg focus:outline-none', 'bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700')}
-                aria-label="Toggle Dark Mode"
-            >
-                {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-blue-400" />}
-            </button>
-        </div>
+        <button
+            onClick={() => setIsDark(!isDark)}
+            aria-pressed={isDark}
+            aria-label={isDark ? '切換為明亮模式' : '切換為暗黑模式'}
+            className={clsx(
+                'flex items-center gap-2.5 h-11 rounded-lg cursor-pointer t-surface',
+                'bg-rail-2 text-rail-ink-muted border border-rail-border [@media(hover:hover)]:hover:text-rail-ink',
+                showLabel ? 'w-full px-3' : 'w-11 justify-center',
+            )}
+        >
+            {isDark ? <Sun size={18} className="shrink-0" /> : <Moon size={18} className="shrink-0" />}
+            {showLabel && <span className="text-xs font-semibold whitespace-nowrap">{isDark ? '暗黑模式' : '明亮模式'}</span>}
+        </button>
     );
 };
 

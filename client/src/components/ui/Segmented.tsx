@@ -23,8 +23,8 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
                     onClick={() => onChange(opt.value)}
                     aria-pressed={value === opt.value}
                     className={cn(
-                        'px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all',
-                        value === opt.value ? 'bg-primary text-white shadow-sm' : 'text-ink-muted hover:text-ink',
+                        'inline-flex items-center justify-center whitespace-nowrap min-h-11 px-3.5 py-1.5 text-xs font-semibold rounded-lg cursor-pointer t-press',
+                        value === opt.value ? 'bg-primary text-primary-ink shadow-sm' : 'text-ink-muted [@media(hover:hover)]:hover:text-ink',
                     )}
                 >
                     {opt.label}

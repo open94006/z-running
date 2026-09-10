@@ -3,13 +3,15 @@ import { cn } from '../../lib/cn';
 
 type Accent = 'primary' | 'info' | 'success' | 'warn' | 'danger' | 'accent';
 
+// The accent rides the icon and the value, not a thick edge stripe. A 3px coloured
+// border on one side is the side-stripe card — a named tell, banned by the system.
 const accentClasses: Record<Accent, string> = {
-    primary: 'border-t-primary text-primary',
-    info: 'border-t-info text-info',
-    success: 'border-t-success text-success',
-    warn: 'border-t-warn text-warn',
-    danger: 'border-t-danger text-danger',
-    accent: 'border-t-accent text-accent',
+    primary: 'text-primary',
+    info: 'text-info',
+    success: 'text-success',
+    warn: 'text-warn',
+    danger: 'text-danger',
+    accent: 'text-accent',
 };
 
 interface TileProps {
@@ -26,19 +28,22 @@ export function Tile({ icon: Icon, label, value, unit, hint, accent = 'primary',
     return (
         <div
             className={cn(
-                'flex flex-col items-center text-center bg-surface border border-border rounded-2xl shadow-sm p-4 border-t-[3px]',
-                'transition-all hover:-translate-y-0.5 hover:shadow-md',
-                accentClasses[accent],
+                'group flex flex-col bg-surface border border-border rounded-2xl shadow-sm p-4 t-raise',
+                '[@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-border-strong',
                 className,
             )}
         >
-            <Icon size={26} className="mb-2" />
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">{label}</span>
-            <span className="text-2xl font-extrabold tracking-tight text-ink mt-0.5">
+            {/* Icon sits inline with the label rather than centred above it — the
+                centred icon-over-heading-over-copy tile is the universal template. */}
+            <div className="flex items-center gap-1.5 min-w-0">
+                <Icon size={15} className={cn('shrink-0', accentClasses[accent])} />
+                <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-muted truncate">{label}</span>
+            </div>
+            <span className="font-display text-3xl font-extrabold tracking-tight text-ink tabular-nums leading-none mt-2">
                 {value}
-                {unit && <small className="text-sm font-medium text-ink-muted ml-0.5">{unit}</small>}
+                {unit && <small className="font-body text-sm font-medium text-ink-muted ml-0.5">{unit}</small>}
             </span>
-            {hint && <span className="text-[10.5px] mt-1 text-ink-muted font-medium">{hint}</span>}
+            {hint && <span className="text-2xs mt-1.5 text-ink-subtle font-medium">{hint}</span>}
         </div>
     );
 }

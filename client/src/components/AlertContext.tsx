@@ -106,26 +106,33 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AlertContext.Provider value={{ showAlert, showConfirm }}>
       {children}
-      <div className="fixed top-4 inset-x-4 sm:left-auto sm:right-4 z-100 flex flex-col gap-2 sm:max-w-sm w-auto pointer-events-none">
+      {/* Fixed corner stack: a new toast never pushes an existing one. aria-live
+          is what makes any of this reach a screen reader at all. */}
+      <div
+        role="status"
+        aria-live="polite"
+        className="fixed top-4 inset-x-4 sm:left-auto sm:right-4 z-toast flex flex-col gap-2 sm:max-w-sm w-auto pointer-events-none"
+      >
         {alerts.map((alert) => {
           const Icon = iconMap[alert.type];
           return (
             <div
               key={alert.id}
               className={cn(
-                "flex items-start p-4 rounded-xl border shadow-lg animate-in fade-in slide-in-from-right-4 duration-300 pointer-events-auto",
+                "flex items-start p-4 rounded-xl border shadow-lg a-slide-in pointer-events-auto",
                 styleMap[alert.type]
               )}
             >
               <div className="shrink-0 mr-3">
-                <Icon className={cn("w-5 h-5", iconStyleMap[alert.type])} />
+                <Icon aria-hidden className={cn("w-5 h-5", iconStyleMap[alert.type])} />
               </div>
               <div className="flex-1 text-sm font-medium text-ink mr-2 wrap-break-word">
                 {alert.message}
               </div>
               <button
                 onClick={() => removeAlert(alert.id)}
-                className="shrink-0 text-ink-subtle hover:text-ink transition-colors cursor-pointer"
+                aria-label="關閉通知"
+                className="relative shrink-0 grid place-items-center w-6 h-6 rounded-md text-ink-subtle cursor-pointer t-press before:absolute before:-inset-2.5 before:content-[''] [@media(hover:hover)]:hover:text-ink [@media(hover:hover)]:hover:bg-surface-3"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -135,7 +142,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
       </div>
 
       {confirmDialog && (
-        <Modal onClose={handleCancel} zIndex={110}>
+        <Modal onClose={handleCancel} label={confirmDialog.title || "確認"}>
           <h3 className="text-xl font-bold mb-2 text-ink">
             {confirmDialog.title || "確認"}
           </h3>
