@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAlert } from '../components/AlertContext';
-import { Search, MapPin, Wind, Droplets, Cloud, Activity, ThermometerSun, CloudRain, Gauge, Heart, Settings, Sun, Clock, Check, Footprints, Sunrise, Sunset, Star } from 'lucide-react';
-import { applyPaceToAdjustment, formatPace, getPaceAdjustment, getRunningCondition, PM25_BREAKPOINTS, pickBestSlotIndex, type RunnerTolerance } from '../lib/runningCondition';
+import { Search, MapPin, Wind, Droplets, Cloud, Activity, ThermometerSun, CloudRain, Gauge, Heart, Settings, Sun, Clock, Check, Footprints, Sunrise, Star } from 'lucide-react';
+import { formatPace, getHeatStressLevel, getRunningCondition, getTrainingPaces, PM25_BREAKPOINTS, pickBestSlotIndex, type RunnerTolerance } from '../lib/runningCondition';
 import { getSunTimes } from '../lib/sunTimes';
 import { getClothingAdvice, getCompassDirection, getHydrationAdvice } from '../lib/runnerAdvice';
 import { Button, Card, Chip, EmptyState, GuideCard, Modal, Segmented, Skeleton, ScrollPicker, TextField, Tile } from '../components/ui';
@@ -64,8 +64,16 @@ interface ConfirmedLocation {
 
 interface RunnerProfile {
     targetPaceSecPerKm: number | null;
+    targetDistanceKm: number;
     tolerance: RunnerTolerance;
 }
+
+const TARGET_DISTANCES = [
+    { value: '5', label: '5K' },
+    { value: '10', label: '10K' },
+    { value: '21.0975', label: '半馬' },
+    { value: '42.195', label: '全馬' },
+] as const;
 
 interface FavoriteLocation {
     id: string;
@@ -82,7 +90,7 @@ const minuteItems = Array.from({ length: 20 }, (_, i) => String(i + 1).padStart(
 const secondItems = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 const RUNNER_PROFILE_STORAGE_KEY = 'weather_runner_profile_v1';
-const DEFAULT_RUNNER_PROFILE: RunnerProfile = { targetPaceSecPerKm: null, tolerance: 'normal' };
+const DEFAULT_RUNNER_PROFILE: RunnerProfile = { targetPaceSecPerKm: null, targetDistanceKm: 10, tolerance: 'normal' };
 
 const getRandomIntInRange = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -131,7 +139,8 @@ function WeatherChecker() {
             const parsed = JSON.parse(raw);
             const targetPaceSecPerKm = typeof parsed?.targetPaceSecPerKm === 'number' && parsed.targetPaceSecPerKm > 0 ? parsed.targetPaceSecPerKm : null;
             const tolerance: RunnerTolerance = parsed?.tolerance === 'heat' || parsed?.tolerance === 'cold' ? parsed.tolerance : 'normal';
-            return { targetPaceSecPerKm, tolerance };
+            const targetDistanceKm = TARGET_DISTANCES.some((d) => Number(d.value) === parsed?.targetDistanceKm) ? parsed.targetDistanceKm : DEFAULT_RUNNER_PROFILE.targetDistanceKm;
+            return { targetPaceSecPerKm, targetDistanceKm, tolerance };
         } catch (error) {
             console.warn('跑者設定初始化讀取失敗，已忽略:', error);
             return DEFAULT_RUNNER_PROFILE;
@@ -525,14 +534,14 @@ function WeatherChecker() {
             : [];
     const bestTrendSlotIndex = pickBestSlotIndex(trendConditions.map((condition) => condition.score));
 
-    // 配速修正建議（溫度+露點總和法則）與日出日落（用於高溫時建議改到日落後跑）
+    // 訓練配速（Daniels VDOT）與日出日落（悶熱時建議改到日落後跑）
     // 台灣緯度不會出現極晝/極夜，但型別上 sunrise/sunset 仍可能為 null（suncalc 對高緯度的通用設計），故仍需防呆
-    const paceAdjustment = weather && runningCondition ? getPaceAdjustment(weather.temperature, runningCondition.dewPoint) : null;
-    const concretePace = paceAdjustment && runnerProfile.targetPaceSecPerKm ? applyPaceToAdjustment(runnerProfile.targetPaceSecPerKm, paceAdjustment) : null;
+    const trainingPaces = runnerProfile.targetPaceSecPerKm ? getTrainingPaces(runnerProfile.targetDistanceKm, runnerProfile.targetPaceSecPerKm) : null;
+    const heatStress = weather && runningCondition ? getHeatStressLevel(weather.temperature, runningCondition.dewPoint) : 'none';
     const rawSunTimes = lastQueryCoords ? getSunTimes(lastQueryCoords.lat, lastQueryCoords.lon) : null;
     const sunTimes = rawSunTimes?.sunrise && rawSunTimes?.sunset ? { sunrise: rawSunTimes.sunrise, sunset: rawSunTimes.sunset } : null;
     const formatClockTime = (date: Date) => date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
-    const suggestEveningRun = Boolean(paceAdjustment && paceAdjustment.level !== 'none' && sunTimes && new Date() < sunTimes.sunset);
+    const suggestEveningRun = Boolean(heatStress !== 'none' && sunTimes && new Date() < sunTimes.sunset);
 
     const clothingAdvice = weather ? getClothingAdvice(weather.feelsLike) : null;
     const hydrationAdvice = weather && runningCondition ? getHydrationAdvice(weather.temperature, runningCondition.dewPoint, plannedDurationMinutes) : null;
@@ -613,6 +622,10 @@ function WeatherChecker() {
         setRunnerProfile((prev) => ({ ...prev, targetPaceSecPerKm: null }));
     };
 
+    const setTargetDistance = (value: string) => {
+        setRunnerProfile((prev) => ({ ...prev, targetDistanceKm: Number(value) }));
+    };
+
     const setTolerance = (tolerance: RunnerTolerance) => {
         setRunnerProfile((prev) => ({ ...prev, tolerance }));
     };
@@ -658,8 +671,8 @@ function WeatherChecker() {
             </form>
 
             {showProfilePanel && (
-                <Card className="mb-4 max-w-3xl">
-                    <p className="text-xs font-black text-ink mb-3 uppercase tracking-wider">跑者設定</p>
+                <Modal onClose={() => setShowProfilePanel(false)} maxWidth="max-w-lg" label="跑者設定">
+                    <h3 className="text-base font-black text-ink mb-3">跑者設定</h3>
                     <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
                         {/* 左塊：配速步進器 + 耐受選擇 */}
                         <div className="flex flex-wrap items-start gap-4">
@@ -678,6 +691,10 @@ function WeatherChecker() {
                                 </button>
                             </div>
                             <div>
+                                <label className="block text-xs text-ink-muted mb-1">目標距離</label>
+                                <Segmented aria-label="目標距離" value={String(runnerProfile.targetDistanceKm)} onChange={setTargetDistance} options={[...TARGET_DISTANCES]} />
+                            </div>
+                            <div>
                                 <label className="block text-xs text-ink-muted mb-1">你比較怕熱還是怕冷？</label>
                                 <Segmented
                                     aria-label="體感耐受"
@@ -694,7 +711,7 @@ function WeatherChecker() {
 
                         {/* 右塊：套用 / 清除（ml-auto 確保同行靠右，換行後亦靠右下） */}
                         <div className="flex items-center gap-2 self-end ml-auto">
-                            <Button type="button" variant="primary" size="sm" onClick={applyTargetPace}>
+                            <Button type="button" variant="primary" size="sm" onClick={() => { applyTargetPace(); setShowProfilePanel(false); }}>
                                 套用
                             </Button>
                             {runnerProfile.targetPaceSecPerKm && (
@@ -704,7 +721,7 @@ function WeatherChecker() {
                             )}
                         </div>
                     </div>
-                </Card>
+                </Modal>
             )}
 
             {favorites.length > 0 && (
@@ -835,30 +852,30 @@ function WeatherChecker() {
                                                 <Footprints size={13} aria-hidden />
                                                 配速建議
                                             </p>
-                                            {concretePace ? (
+                                            {trainingPaces ? (
                                                 <>
-                                                    <p className="font-black leading-tight mt-1">
-                                                        <span className="text-xs font-semibold opacity-75 tabular-nums">{formatPace(runnerProfile.targetPaceSecPerKm!)}/km</span>
-                                                        <span className="mx-1.5 opacity-65">→</span>
-                                                        <span className="text-base tabular-nums">
-                                                            {formatPace(concretePace.minSecPerKm)}~{formatPace(concretePace.maxSecPerKm)}/km
-                                                        </span>
+                                                    <p className="text-xs opacity-75 mt-1 tabular-nums">
+                                                        目標 {TARGET_DISTANCES.find((d) => Number(d.value) === runnerProfile.targetDistanceKm)?.label} @ {formatPace(runnerProfile.targetPaceSecPerKm!)}/km・VDOT {trainingPaces.vdot}
                                                     </p>
-                                                    {paceAdjustment && <p className="text-xs opacity-85 mt-0.5 leading-snug">{paceAdjustment.message}</p>}
+                                                    <dl className="grid grid-cols-3 gap-2 mt-1.5 tabular-nums">
+                                                        {(
+                                                            [
+                                                                ['輕鬆跑', trainingPaces.easy],
+                                                                ['節奏跑', trainingPaces.tempo],
+                                                                ['間歇', trainingPaces.interval],
+                                                            ] as const
+                                                        ).map(([label, range]) => (
+                                                            <div key={label}>
+                                                                <dt className="text-2xs font-semibold opacity-75">{label}</dt>
+                                                                <dd className="text-sm font-black leading-tight">
+                                                                    {formatPace(range.minSecPerKm)}~{formatPace(range.maxSecPerKm)}
+                                                                </dd>
+                                                            </div>
+                                                        ))}
+                                                    </dl>
                                                 </>
-                                            ) : paceAdjustment ? (
-                                                <p className="text-xs font-semibold mt-1 leading-snug">{paceAdjustment.message}</p>
                                             ) : (
-                                                <p className="text-xs opacity-80 mt-1">於設定區輸入目標配速，即可取得當日建議</p>
-                                            )}
-                                            {sunTimes && (
-                                                <p className="inline-flex flex-wrap items-center gap-1.5 text-xs opacity-85 mt-1.5 leading-snug">
-                                                    <Sunrise size={13} aria-hidden />
-                                                    日出 {formatClockTime(sunTimes.sunrise)}
-                                                    <Sunset size={13} aria-hidden className="ml-1" />
-                                                    日落 {formatClockTime(sunTimes.sunset)}
-                                                    {suggestEveningRun && <span className="font-semibold">・建議日落後再跑，體感較涼爽</span>}
-                                                </p>
+                                                <p className="text-xs opacity-80 mt-1">於設定區輸入目標配速與距離，即可取得輕鬆跑／節奏跑／間歇配速</p>
                                             )}
                                         </div>
                                     </div>
@@ -896,11 +913,19 @@ function WeatherChecker() {
                                 {typeof weather.uvIndex === 'number' && (
                                     <Tile icon={Sun} label="紫外線" value={weather.uvIndex} hint={weather.uvIndex >= 8 ? `▲ ${weather.uvLevel}` : `✓ ${weather.uvLevel}`} accent="danger" />
                                 )}
-                                {clothingAdvice && <Tile icon={ThermometerSun} label="穿著建議" value={clothingAdvice.title} hint={clothingAdvice.description} accent="warn" />}
+                                {clothingAdvice && <Tile icon={ThermometerSun} label="穿著建議" value={<span className="text-xl whitespace-nowrap">{clothingAdvice.title}</span>} hint={clothingAdvice.description} accent="warn" />}
                             </div>
 
                             {/* 第一欄：空氣品質建議 → 補水建議 → 風速與風向 */}
                             <div className="flex flex-col gap-4 min-w-0">
+                                {sunTimes && (
+                                    <GuideCard
+                                        icon={Sunrise}
+                                        title="日出日落"
+                                        desc={`日出 ${formatClockTime(sunTimes.sunrise)}・日落 ${formatClockTime(sunTimes.sunset)}${suggestEveningRun ? '。目前偏悶熱，建議日落後再跑，體感較涼爽。' : ''}`}
+                                        accent="warn"
+                                    />
+                                )}
                                 <GuideCard
                                     icon={Activity}
                                     title="空氣品質建議"
@@ -1134,7 +1159,7 @@ function WeatherChecker() {
                                 key={`${item.lat}-${item.lon}-${index}`}
                                 type="button"
                                 onClick={() => handleLocationSelect(item)}
-                                className="w-full text-left px-4 py-3 rounded-xl border border-border hover:bg-surface-3 transition-colors"
+                                className="w-full text-left px-4 py-3 rounded-xl border border-border hover:bg-surface-3 transition-colors focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
                             >
                                 <div className="font-semibold text-ink">{item.name}</div>
                                 <div className="text-xs text-ink-muted mt-0.5">{item.state || '台灣'}</div>

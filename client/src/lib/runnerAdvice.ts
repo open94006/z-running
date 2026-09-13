@@ -1,4 +1,4 @@
-import { getPaceAdjustment, type PaceAdjustment } from './runningCondition';
+import { getHeatStressLevel, type HeatStressLevel } from './runningCondition';
 
 // 16 方位羅盤，供風向具體化顯示（例如「東北風」）
 const COMPASS_DIRECTIONS = ['北', '北北東', '東北', '東北東', '東', '東南東', '東南', '南南東', '南', '南南西', '西南', '西南西', '西', '西北西', '西北', '北北西'];
@@ -21,8 +21,8 @@ export const getClothingAdvice = (feelsLikeC: number): ClothingAdvice => {
 
 export type HydrationAdvice = { minMl: number; maxMl: number; message: string };
 
-// 每小時建議補水量（ml）依「溫度+露點」悶熱分級，沿用 getPaceAdjustment 的分級
-const HYDRATION_ML_PER_HOUR: Record<PaceAdjustment['level'], [number, number]> = {
+// 每小時建議補水量（ml）依「溫度+露點」悶熱分級
+const HYDRATION_ML_PER_HOUR: Record<HeatStressLevel, [number, number]> = {
     none: [400, 500],
     slight: [500, 600],
     moderate: [600, 750],
@@ -30,8 +30,7 @@ const HYDRATION_ML_PER_HOUR: Record<PaceAdjustment['level'], [number, number]> =
 };
 
 export const getHydrationAdvice = (tempC: number, dewPointC: number, durationMinutes: number): HydrationAdvice => {
-    const { level } = getPaceAdjustment(tempC, dewPointC);
-    const [baseMin, baseMax] = HYDRATION_ML_PER_HOUR[level];
+    const [baseMin, baseMax] = HYDRATION_ML_PER_HOUR[getHeatStressLevel(tempC, dewPointC)];
     const hours = durationMinutes / 60;
     const roundTo50 = (ml: number) => Math.round(ml / 50) * 50;
     const minMl = roundTo50(baseMin * hours);

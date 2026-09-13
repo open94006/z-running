@@ -69,12 +69,13 @@
 
     /* ── score bands · one solid per running-condition level.
        Solid, not a gradient: Sport's divider language is bleed-colour and
-       oversized solid, and a fixed L guarantees the white ink passes without
-       a text-shadow propping it up. ── */
-    --score-excellent: oklch(48% 0.15 150);
-    --score-good: oklch(46% 0.17 258);
-    --score-fair: oklch(50% 0.15 62);
-    --score-poor: oklch(46% 0.19 27);
+       oversized solid. Each L is the brightest that keeps --score-ink at
+       ≥ 4.6:1 (WCAG AA for the card's xs body text) — pushed up from the
+       old 46–50% so the bands read as fresh, not sombre. ── */
+    --score-excellent: oklch(53% 0.17 155);
+    --score-good: oklch(56% 0.19 255);
+    --score-fair: oklch(56% 0.16 70);
+    --score-poor: oklch(58% 0.21 25);
     --score-ink: oklch(98% 0.005 255);
 
     /* ── scoreboard sides · two opposed identities, not danger/primary ── */

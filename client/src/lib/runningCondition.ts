@@ -8,33 +8,43 @@ export const calculateDewPoint = (tempC: number, humidityPercent: number): numbe
     return (b * alpha) / (a - alpha);
 };
 
-export type PaceAdjustment = {
-    level: 'none' | 'slight' | 'moderate' | 'severe';
-    minPercent: number;
-    maxPercent: number;
-    message: string;
-};
+export type HeatStressLevel = 'none' | 'slight' | 'moderate' | 'severe';
 
-// 配速修正建議：跑圈常用「溫度+露點總和」法則（Runner's World 等廣泛引用）
-export const getPaceAdjustment = (tempC: number, dewPointC: number): PaceAdjustment => {
+// 悶熱分級：跑圈常用「溫度+露點總和」法則（Runner's World 等廣泛引用），供補水量與日落後跑建議使用
+export const getHeatStressLevel = (tempC: number, dewPointC: number): HeatStressLevel => {
     const sum = tempC + dewPointC;
-    if (sum <= 37) {
-        return { level: 'none', minPercent: 0, maxPercent: 0, message: '溫度與露點總和落在舒適區間，維持平常配速即可。' };
-    }
-    if (sum <= 43) {
-        return { level: 'slight', minPercent: 1, maxPercent: 2, message: '建議配速放慢 1-2%。' };
-    }
-    if (sum <= 49) {
-        return { level: 'moderate', minPercent: 3, maxPercent: 5, message: '建議配速放慢 3-5%，或改為輕鬆跑。' };
-    }
-    return { level: 'severe', minPercent: 5, maxPercent: 10, message: '建議配速放慢 5% 以上，或改室內訓練。' };
+    if (sum <= 37) return 'none';
+    if (sum <= 43) return 'slight';
+    if (sum <= 49) return 'moderate';
+    return 'severe';
 };
 
-// 把配速修正百分比套用到使用者的目標配速上，回傳具體配速區間（秒/公里）
-export const applyPaceToAdjustment = (targetSecPerKm: number, adjustment: PaceAdjustment): { minSecPerKm: number; maxSecPerKm: number } => {
+export type PaceRange = { minSecPerKm: number; maxSecPerKm: number };
+export type TrainingPaces = { vdot: number; easy: PaceRange; tempo: PaceRange; interval: PaceRange };
+
+// Daniels–Gilbert（Oxygen Power, 1979）：由目標距離＋配速反推 VDOT，再依 Daniels' Running Formula 的強度區間換算訓練配速
+// E 59–74%、T 83–88%、I 95–100% VDOT。速度單位 m/min。
+export const getTrainingPaces = (distanceKm: number, secPerKm: number): TrainingPaces => {
+    const timeMin = (distanceKm * secPerKm) / 60;
+    const velocity = (distanceKm * 1000) / timeMin;
+    const vo2 = -4.6 + 0.182258 * velocity + 0.000104 * velocity ** 2;
+    const pctMax = 0.8 + 0.1894393 * Math.exp(-0.012778 * timeMin) + 0.2989558 * Math.exp(-0.1932605 * timeMin);
+    const vdot = vo2 / pctMax;
+
+    // 反解二次式 0.000104v² + 0.182258v − (4.6 + VO2) = 0，取正根
+    const paceAt = (fraction: number) => {
+        const target = vdot * fraction;
+        const v = (-0.182258 + Math.sqrt(0.182258 ** 2 + 4 * 0.000104 * (4.6 + target))) / (2 * 0.000104);
+        return Math.round(60000 / v);
+    };
+    // 比例愈高跑愈快，所以 min（較快）對應區間上限
+    const range = (lo: number, hi: number): PaceRange => ({ minSecPerKm: paceAt(hi), maxSecPerKm: paceAt(lo) });
+
     return {
-        minSecPerKm: Math.round(targetSecPerKm * (1 + adjustment.minPercent / 100)),
-        maxSecPerKm: Math.round(targetSecPerKm * (1 + adjustment.maxPercent / 100)),
+        vdot: Math.round(vdot * 10) / 10,
+        easy: range(0.59, 0.74),
+        tempo: range(0.83, 0.88),
+        interval: range(0.95, 1.0),
     };
 };
 

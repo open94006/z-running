@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyPaceToAdjustment, calculateDewPoint, formatPace, getPaceAdjustment, getRunningCondition, PM25_BREAKPOINTS, pickBestSlotIndex } from './runningCondition';
+import { calculateDewPoint, formatPace, getHeatStressLevel, getRunningCondition, getTrainingPaces, PM25_BREAKPOINTS, pickBestSlotIndex } from './runningCondition';
 
 describe('getRunningCondition - PM2.5 官方對照表切點', () => {
     // 溫度/濕度/風速固定在中性值，只測 PM2.5 這一個變因
@@ -113,29 +113,12 @@ describe('getRunningCondition - 露點評分（取代單純濕度衡量濕熱）
     });
 });
 
-describe('getPaceAdjustment - 溫度+露點總和配速修正建議', () => {
-    it('總和 <= 37：不需調整', () => {
-        expect(getPaceAdjustment(20, 15).level).toBe('none');
-    });
-
-    it('總和 38-43：輕微放慢 1-2%', () => {
-        const result = getPaceAdjustment(25, 15); // 40
-        expect(result.level).toBe('slight');
-        expect(result.minPercent).toBe(1);
-        expect(result.maxPercent).toBe(2);
-    });
-
-    it('總和 44-49：中度放慢 3-5%', () => {
-        const result = getPaceAdjustment(28, 18); // 46
-        expect(result.level).toBe('moderate');
-        expect(result.minPercent).toBe(3);
-        expect(result.maxPercent).toBe(5);
-    });
-
-    it('總和 >= 50：嚴重，建議放慢 5% 以上', () => {
-        const result = getPaceAdjustment(30, 22); // 52
-        expect(result.level).toBe('severe');
-        expect(result.minPercent).toBe(5);
+describe('getHeatStressLevel - 溫度+露點總和悶熱分級', () => {
+    it('四個切點：<=37 none、<=43 slight、<=49 moderate、否則 severe', () => {
+        expect(getHeatStressLevel(20, 15)).toBe('none'); // 35
+        expect(getHeatStressLevel(25, 15)).toBe('slight'); // 40
+        expect(getHeatStressLevel(28, 18)).toBe('moderate'); // 46
+        expect(getHeatStressLevel(30, 22)).toBe('severe'); // 52
     });
 });
 
@@ -153,25 +136,20 @@ describe('formatPace - 配速格式化', () => {
     });
 });
 
-describe('applyPaceToAdjustment - 具體化配速建議', () => {
-    it('無需調整（none）：範圍應等於原配速', () => {
-        const none = getPaceAdjustment(20, 15); // sum=35, none
-        const result = applyPaceToAdjustment(360, none); // 6:00/km
-        expect(result.minSecPerKm).toBe(360);
-        expect(result.maxSecPerKm).toBe(360);
+describe('getTrainingPaces - Daniels VDOT 訓練配速', () => {
+    it('10K 50:00（5\'00"/km）→ VDOT 約 40（Daniels 表：VDOT 40 ≈ 10K 49:48），且 E > T > I（秒/公里遞減）', () => {
+        const paces = getTrainingPaces(10, 300);
+        expect(paces.vdot).toBeCloseTo(40, 0);
+        expect(paces.easy.maxSecPerKm).toBeGreaterThan(paces.easy.minSecPerKm);
+        expect(paces.easy.minSecPerKm).toBeGreaterThan(paces.tempo.maxSecPerKm);
+        expect(paces.tempo.minSecPerKm).toBeGreaterThan(paces.interval.maxSecPerKm);
+        // 10K 比賽配速介於 T 與 I 之間（Daniels 表 VDOT 40：T 5\'06"、I 4\'42"）
+        expect(paces.tempo.minSecPerKm).toBeGreaterThan(300);
+        expect(paces.interval.maxSecPerKm).toBeLessThan(300);
     });
 
-    it('輕微放慢 1-2%：6:00/km 應變成約 363~367 秒', () => {
-        const slight = getPaceAdjustment(25, 15); // slight, 1-2%
-        const result = applyPaceToAdjustment(360, slight);
-        expect(result.minSecPerKm).toBe(Math.round(360 * 1.01));
-        expect(result.maxSecPerKm).toBe(Math.round(360 * 1.02));
-    });
-
-    it('嚴重放慢 5% 以上：下限應明顯高於原配速', () => {
-        const severe = getPaceAdjustment(30, 22); // severe, >=5%
-        const result = applyPaceToAdjustment(360, severe);
-        expect(result.minSecPerKm).toBeGreaterThan(360);
+    it('同配速跑更長距離代表更強，VDOT 應更高', () => {
+        expect(getTrainingPaces(42.195, 300).vdot).toBeGreaterThan(getTrainingPaces(5, 300).vdot);
     });
 });
 
