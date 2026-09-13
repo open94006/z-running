@@ -352,7 +352,7 @@ const BadmintonScoreboard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-1.5 md:gap-4 p-1 md:p-4 max-w-4xl mx-auto h-full overflow-hidden bg-app">
+    <div className="flex flex-col items-center gap-1.5 md:gap-4 w-full h-full overflow-hidden bg-app">
       {/* 頂部控制欄 */}
       <Card className="w-full flex justify-between items-center px-3 py-1 md:py-3 rounded-xl!">
         <div className="flex space-x-2 items-center">
@@ -401,7 +401,7 @@ const BadmintonScoreboard: React.FC = () => {
       </Card>
 
       {/* 記分板區域 */}
-      <div className="grid grid-cols-2 gap-1.5 md:gap-4 w-full flex-1 min-h-0">
+      <div className="grid grid-cols-1 landscape:grid-cols-2 md:grid-cols-2 gap-1.5 md:gap-4 w-full flex-1 min-h-0 portrait:min-h-[70dvh]">
         {/* 紅方 */}
         <div
           className={clsx(
@@ -418,7 +418,7 @@ const BadmintonScoreboard: React.FC = () => {
               </span>
             </div>
           )}
-          <div className="flex items-center space-x-1 mb-0.5 md:mb-2 text-center">
+          <div className="flex items-center space-x-1 mb-0.5 portrait:mb-4 md:mb-2 text-center">
             <ShuttlecockIcon size={12} className="text-team-a md:w-5 md:h-5" />
             <h2 className="text-2xs md:text-xl font-bold text-team-a">
               紅方 (A)
@@ -437,11 +437,11 @@ const BadmintonScoreboard: React.FC = () => {
 
           <div
             onClick={() => updateScore("Red")}
-            className="text-4xl md:text-8xl font-black text-ink cursor-pointer select-none active:scale-95 transition-transform leading-none"
+            className="text-4xl portrait:text-7xl md:text-8xl font-black text-ink cursor-pointer select-none active:scale-95 transition-transform leading-none"
           >
             {scoreRed}
           </div>
-          <div className="mt-1.5 md:mt-6 grid grid-cols-2 gap-1 md:gap-3 w-full text-center px-1">
+          <div className="mt-1.5 portrait:mt-6 md:mt-6 grid grid-cols-2 gap-1 md:gap-3 w-full text-center px-1">
             <div
               onClick={() => isDoubles && startEditing("Red", "left")}
               className={clsx(
@@ -495,7 +495,7 @@ const BadmintonScoreboard: React.FC = () => {
               </span>
             </div>
           )}
-          <div className="flex items-center space-x-1 mb-0.5 md:mb-2 text-center">
+          <div className="flex items-center space-x-1 mb-0.5 portrait:mb-4 md:mb-2 text-center">
             <ShuttlecockIcon
               size={12}
               className="text-team-b md:w-5 md:h-5"
@@ -516,11 +516,11 @@ const BadmintonScoreboard: React.FC = () => {
           </div>
           <div
             onClick={() => updateScore("Blue")}
-            className="text-4xl md:text-8xl font-black text-ink cursor-pointer select-none active:scale-95 transition-transform leading-none"
+            className="text-4xl portrait:text-7xl md:text-8xl font-black text-ink cursor-pointer select-none active:scale-95 transition-transform leading-none"
           >
             {scoreBlue}
           </div>
-          <div className="mt-1.5 md:mt-6 grid grid-cols-2 gap-1 md:gap-3 w-full text-center px-1">
+          <div className="mt-1.5 portrait:mt-6 md:mt-6 grid grid-cols-2 gap-1 md:gap-3 w-full text-center px-1">
             <div
               onClick={() => isDoubles && startEditing("Blue", "left")}
               className={clsx(
@@ -560,7 +560,7 @@ const BadmintonScoreboard: React.FC = () => {
       </div>
 
       {/* 狀態提示 */}
-      <Notice icon={Info} tone="info" className="w-full py-1.5 md:py-2.5">
+      <Notice icon={Info} tone="info" className="w-full py-1.5 md:py-2.5 items-center justify-center [&>svg]:mt-0">
         <p className="font-bold text-2xs md:text-sm">
           發球：
           <span className="text-team-b">
